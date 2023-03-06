@@ -11,12 +11,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        replaceFragment(MovieFragment(),this.supportFragmentManager)
+        replaceFragment(PopularMovieFragment(),this.supportFragmentManager,R.id.popularTrendFrameLayout)
+        replaceFragment(TrendMovieFragment(),this.supportFragmentManager,R.id.trendTrendFrameLayout)
     }
 
-    private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager){
+    private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager,layout :Int){
             val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.main_frame_layout,fragment)
+            fragmentTransaction.replace(layout,fragment)
             fragmentTransaction.commit()
         }
     }

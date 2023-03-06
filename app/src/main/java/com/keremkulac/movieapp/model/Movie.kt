@@ -6,7 +6,7 @@ import java.io.Serializable
 
 data class PopularMovies(
     @SerializedName("results")
-    val popularMovies: ArrayList<Movie>
+    val movies: ArrayList<Movie>
 ) : Serializable
 data class Movie(
     @SerializedName("adult")
@@ -23,12 +23,14 @@ data class Movie(
     val original_title: String,
     @SerializedName("overview")
     val overview: String,
+    @SerializedName("name")
+    val name: String?,
     @SerializedName("popularity")
     val popularity: Double,
     @SerializedName("poster_path")
     val poster_path: String,
     @SerializedName("release_date")
-    val release_date: String,
+    val release_date: String?,
     @SerializedName("title")
     val title: String,
     @SerializedName("video")

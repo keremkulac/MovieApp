@@ -42,7 +42,7 @@ class PopularMovieAdapter(
             val args = Bundle()
             val movieDetailFragment = MovieDetailFragment()
             args.putSerializable("movie",popularMovieList[position])
-            movieDetailFragment.setArguments(args)
+            movieDetailFragment.arguments = args
             movieDetailFragment.show(activity.supportFragmentManager,"TAG")
             fragmentTransaction.commit()
         }

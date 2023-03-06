@@ -5,7 +5,7 @@ import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface MovieApi {
+interface PopularMovieApi {
     // https://api.themoviedb.org/3/movie/popular?api_key=4af5441468ab90c82bbdf23668f9244f
     //https://api.themoviedb.org/3/movie/550?api_key=4af5441468ab90c82bbdf23668f9244f
     @GET("movie/popular")
