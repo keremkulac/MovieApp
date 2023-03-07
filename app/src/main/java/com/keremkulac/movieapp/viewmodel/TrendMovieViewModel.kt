@@ -3,7 +3,7 @@ package com.keremkulac.movieapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.keremkulac.movieapp.Movie
-import com.keremkulac.movieapp.PopularMovies
+import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.service.TrendMovieApiImp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -16,16 +16,16 @@ class TrendMovieViewModel {
     private val trendMovieApiImp = TrendMovieApiImp()
 
     init {
-        getData()
+        getTrendMovies()
     }
 
-    private fun getData(){
+    private fun getTrendMovies(){
         disposable.add(
             trendMovieApiImp.getTrendMovies("4af5441468ab90c82bbdf23668f9244f")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<PopularMovies>(){
-                    override fun onSuccess(t: PopularMovies) {
+                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
+                    override fun onSuccess(t: MovieResult) {
                         trendMovies.value = t.movies
                     }
                     override fun onError(e: Throwable) {

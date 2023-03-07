@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
-data class PopularMovies(
+data class MovieResult(
     @SerializedName("results")
     val movies: ArrayList<Movie>
 ) : Serializable
@@ -14,7 +14,7 @@ data class Movie(
     @SerializedName("backdrop_path")
     val backdrop_path: String,
     @SerializedName("genre_ids")
-    val genre_ids: List<Int>,
+    val genre_ids: ArrayList<Int>,
     @SerializedName("id")
     val id: Long,
     @SerializedName("original_language")

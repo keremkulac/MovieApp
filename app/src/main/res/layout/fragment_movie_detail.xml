@@ -9,12 +9,26 @@
 
     <ImageView
         android:id="@+id/movieImage"
-        android:layout_width="150dp"
-        android:layout_height="200dp"
+        android:layout_width="160dp"
+        android:layout_height="240dp"
         android:layout_margin="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/movieGenres"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+
+        android:gravity="start"
+        android:textStyle="bold"
+        android:inputType="textMultiLine"
+        android:maxLines="2"
+        app:layout_constraintStart_toEndOf="@+id/movieImage"
+        app:layout_constraintTop_toBottomOf="@+id/movieName" />
 
     <TextView
         android:id="@+id/movieReleaseDate"
@@ -22,42 +36,64 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-
         android:text="@string/date"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/movieImage"
-        app:layout_constraintTop_toBottomOf="@+id/movieName" />
+        app:layout_constraintTop_toBottomOf="@+id/movieGenres" />
 
     <TextView
         android:id="@+id/movieRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="12dp"
-        android:layout_marginStart="14dp"
-        android:text="@string/rate"
+        android:text="10"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageViewIcon"
+        app:layout_constraintTop_toBottomOf="@+id/movieGenres" />
+
+    <ImageView
+        android:id="@+id/imageViewIcon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="14dp"
+        android:src="@drawable/ic_movie_rate"
         app:layout_constraintStart_toEndOf="@+id/movieReleaseDate"
-        app:layout_constraintTop_toBottomOf="@+id/movieName" />
+        app:layout_constraintTop_toBottomOf="@+id/movieGenres" />
 
     <TextView
         android:id="@+id/movieOverview"
-        android:layout_width="142dp"
-        android:layout_height="121dp"
+        android:layout_width="201dp"
+        android:layout_height="139dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="8dp"
+        android:scrollbars="vertical"
         android:text="@string/overview"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/movieImage"
-        app:layout_constraintTop_toBottomOf="@+id/movieName" />
+        app:layout_constraintTop_toBottomOf="@+id/movieRate" />
 
     <TextView
-        android:textStyle="bold"
-        android:textSize="16sp"
+        android:textColor="@color/black"
         android:id="@+id/movieName"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="start"
+        android:inputType="textMultiLine"
+        android:maxLines="2"
+
         android:text="@string/movie_name"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/movieImage"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

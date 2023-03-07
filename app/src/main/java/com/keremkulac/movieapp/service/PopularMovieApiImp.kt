@@ -1,6 +1,6 @@
 package com.keremkulac.movieapp.service
 
-import com.keremkulac.movieapp.PopularMovies
+import com.keremkulac.movieapp.MovieResult
 import io.reactivex.Single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -16,7 +16,7 @@ class PopularMovieApiImp {
         .build()
         .create(PopularMovieApi::class.java)
 
-    fun getPopularMovies(key : String) : Single<PopularMovies> {
+    fun getPopularMovies(key : String) : Single<MovieResult> {
         return api.getPopularMovies(key)
     }
 
