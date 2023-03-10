@@ -12,17 +12,21 @@ import com.keremkulac.movieapp.databinding.ItemMovieBinding
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import com.keremkulac.movieapp.view.MovieDetailFragment
+import kotlin.collections.ArrayList
 
 class TrendMovieAdapter (
         var activity : FragmentActivity,
-        var popularMovieList : ArrayList<Movie>): RecyclerView.Adapter<TrendMovieAdapter.TrendViewHolder>(){
+        var trendMovieList : ArrayList<Movie>): RecyclerView.Adapter<TrendMovieAdapter.TrendViewHolder>(){
 
+        var list =  ArrayList<Movie>()
         class TrendViewHolder (val binding : ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
             fun bind(popularMovies: Movie){
-                binding.popularMovies =popularMovies
+                binding.movie =popularMovies
             }
         }
-
+        init {
+            list = trendMovieList
+        }
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrendViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val view = DataBindingUtil.inflate<ItemMovieBinding>(inflater,
@@ -31,22 +35,27 @@ class TrendMovieAdapter (
         }
 
         override fun getItemCount(): Int {
-            return popularMovieList.size
+            return trendMovieList.size
         }
 
         override fun onBindViewHolder(holder: TrendViewHolder, position: Int) {
-            holder.apply { bind(popularMovieList[position]) }
-            holder.binding.moviePoster.downloadFromUrl(popularMovieList[position].poster_path,
+            holder.apply { bind(trendMovieList[position]) }
+            holder.binding.moviePoster.downloadFromUrl(trendMovieList[position].poster_path,
                 placeHolderProgressBar(holder.itemView.context)
             )
             holder.itemView.setOnClickListener {
                 val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
                 val args = Bundle()
                 val movieDetailFragment = MovieDetailFragment()
-                args.putSerializable("movie",popularMovieList[position])
+                args.putSerializable("movie",trendMovieList[position])
                 movieDetailFragment.arguments = args
                 movieDetailFragment.show(activity.supportFragmentManager,"TAG")
                 fragmentTransaction.commit()
             }
         }
+    fun filterList(filterlist: ArrayList<Movie>) {
+        trendMovieList = filterlist
+        notifyDataSetChanged()
+    }
+
 }

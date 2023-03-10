@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.keremkulac.movieapp.model.Genre
 import com.keremkulac.movieapp.model.Genres
 import com.keremkulac.movieapp.service.MovieGenreApiImp
+import com.keremkulac.movieapp.util.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -20,7 +21,7 @@ class MovieDetailViewModel : ViewModel() {
     }
     private fun getGenres(){
         disposable.add(
-            movieGenreApiImp.getMovieGenre("4af5441468ab90c82bbdf23668f9244f")
+            movieGenreApiImp.getMovieGenre(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<Genres>(){

@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.MovieResult
+import com.keremkulac.movieapp.adapter.PopularMovieAdapter
 import com.keremkulac.movieapp.service.PopularMovieApiImp
+import com.keremkulac.movieapp.util.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -17,12 +19,11 @@ class PopularMovieViewModel : ViewModel() {
     private val popularMovieAPIImp = PopularMovieApiImp()
 
     init {
-        getData()
-
+        getPopularMovies()
     }
-    private fun getData(){
+    private fun getPopularMovies(){
         disposable.add(
-            popularMovieAPIImp.getPopularMovies("4af5441468ab90c82bbdf23668f9244f")
+            popularMovieAPIImp.getPopularMovies(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -34,6 +35,22 @@ class PopularMovieViewModel : ViewModel() {
                     }
                 })
         )
+    }
+    fun filter(text: String,popularMovieList: ArrayList<Movie>,adapter: PopularMovieAdapter) {
+        val filteredList: ArrayList<Movie> = ArrayList()
+      //  Log.d("TAG2",popularMovieList.toString())
+        for (item in popularMovieList) {
+            if (item.original_title!!.toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item)
+                Log.d("TAG1",filteredList.toString())
+
+            }
+        }
+        if (filteredList.isEmpty()) {
+            // Toast.makeText(context, "No Data Found..", Toast.LENGTH_SHORT).show()
+        } else {
+            adapter.filterList(filteredList)
+        }
     }
 
 

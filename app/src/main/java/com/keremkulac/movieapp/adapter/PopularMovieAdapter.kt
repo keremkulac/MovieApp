@@ -19,7 +19,7 @@ class PopularMovieAdapter(
 
     class PopularViewHolder (val binding : ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(popularMovies: Movie){
-            binding.popularMovies =popularMovies
+            binding.movie =popularMovies
         }
     }
 
@@ -46,6 +46,10 @@ class PopularMovieAdapter(
             movieDetailFragment.show(activity.supportFragmentManager,"TAG")
             fragmentTransaction.commit()
         }
+    }
+    fun filterList(filterList: ArrayList<Movie>) {
+        popularMovieList.addAll(filterList)
+        notifyDataSetChanged()
     }
 }
 

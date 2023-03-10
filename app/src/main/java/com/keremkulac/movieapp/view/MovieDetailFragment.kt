@@ -49,6 +49,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
             binding.movieName.text = arg.original_title
 
         }
+        Log.d("TAG1",arg.id.toString())
 
         binding.movieImage.downloadFromUrl(arg.poster_path, placeHolderProgressBar(requireContext()))
         binding.movieRate.text = vote(arg.vote_average.toString())

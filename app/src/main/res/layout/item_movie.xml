@@ -4,7 +4,7 @@
 
     <data>
         <variable
-            name="popularMovies"
+            name="movie"
             type="com.keremkulac.movieapp.Movie" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,10 +13,11 @@
     android:layout_height="wrap_content">
 
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/moviePoster"
         android:layout_width="150dp"
         android:layout_height="200dp"
+        app:shapeAppearanceOverlay="@style/Circular"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
