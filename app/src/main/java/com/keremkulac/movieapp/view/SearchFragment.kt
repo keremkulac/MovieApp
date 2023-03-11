@@ -22,13 +22,10 @@ class SearchFragment : Fragment() {
     private lateinit var viewModel : SearchViewModel
     private lateinit var list : ArrayList<Movie>
     private lateinit var adapter : SearchAdapter
-    private var list1 = ArrayList<Movie>()
-    private var list2 = ArrayList<Movie>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentSearchBinding.inflate(inflater)
         list = ArrayList()
-
         return binding.root
     }
 
@@ -38,14 +35,12 @@ class SearchFragment : Fragment() {
         adapter = SearchAdapter(requireActivity(),list)
         setSearchMenu()
         createRecyclerView()
-
     }
 
    private fun createRecyclerView(){
        binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
        binding.searchRecyclerView.adapter = adapter
     }
-
 
     private fun setSearchMenu(){
         val menuHost : MenuHost = requireActivity()
@@ -61,6 +56,7 @@ class SearchFragment : Fragment() {
                             MenuItem.OnActionExpandListener {
                             override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
                                 binding.searchRecyclerView.visibility =  View.VISIBLE
+                                viewModel.combineMovies()
                                 return true
                             }
 
@@ -77,7 +73,6 @@ class SearchFragment : Fragment() {
                             }
                             override fun onQueryTextChange(newText: String): Boolean {
                                 binding.searchRecyclerView.visibility =  View.VISIBLE
-
                                 viewModel.filter(newText,adapter)
                                 return true
                             }

@@ -20,14 +20,12 @@ class SearchViewModel {
     var trendMovies = MutableLiveData<ArrayList<Movie>>()
     private val popularMovieAPIImp = PopularMovieApiImp()
     private val trendMovieApiImp = TrendMovieApiImp()
-   // private  var list3 : ArrayList<Movie>
-   var i = 0
-    var l = 0
+    private  var combinedList : ArrayList<Movie>
 
     init {
         getPopularMovies()
         getTrendMovies()
-       // list3 = ArrayList()
+        combinedList = ArrayList()
     }
 
     private fun getPopularMovies(){
@@ -62,49 +60,34 @@ class SearchViewModel {
         )
     }
     fun combineMovies(){
-
         var sameMovies = ArrayList<Movie>()
-        var list1 = trendMovies.value!!
-        var list2 = popularMovies.value!!
-
-
-            for (x in list1){
-                for (y in list2){
-                    if(x.original_title != null && y.original_title != null){
-                        if(x.original_title == y.original_title){
-                            Log.d("TAGG",l.toString())
-                       //     list1.removeAt()
-                        }
-                    }
-                   l +=1
-
-                }
-                i +=1
-            }
-        /*
-        for (trendMovieItems in list1!!){
-            for (popularMovieItems in list2!!){
-                if(popularMovieItems.original_title != null && trendMovieItems.original_title != null) {
-
-                    if (popularMovieItems.original_title == trendMovieItems.original_title) {
+        for (trendMovieItems in trendMovies.value!!){
+            for (popularMovieItems in popularMovies.value!!){
+                if(popularMovieItems.id != null && trendMovieItems.id != null) {
+                    if (popularMovieItems.id == trendMovieItems.id) {
                         sameMovies.add(popularMovieItems)
-                        list1.remove(trendMovieItems)
-                      //  trendMovies.value!!.removeAll(listOf(popularMovieItems))
                     }
                 }
             }
-            Log.d("TAG12323142134",list1.size.toString())
-
         }
+        val deletedList = mutableListOf<Movie>()
+        deletedList.addAll(trendMovies.value!!)
+        for (i in trendMovies.value!!){
+            for (x in sameMovies.indices){
+                if(i.id == sameMovies[x].id){
+                    deletedList.remove(i)
+                }
+            }
+        }
+        combinedList.addAll(deletedList)
+        combinedList.addAll(popularMovies.value!!)
+        Log.d("TAG1",combinedList.size.toString())
 
-
-         */
-        Log.d("TAG1134",list1.size.toString())
     }
     fun filter(text: String,adapter: SearchAdapter){
-        combineMovies()
+
         val filteredList: ArrayList<Movie> = ArrayList()
-        for (item in trendMovies.value!!) {
+        for (item in combinedList) {
             if(item.original_title != null){
                 if (item.original_title.toLowerCase().contains(text.toLowerCase())) {
                     filteredList.add(item)
@@ -115,12 +98,7 @@ class SearchViewModel {
         if (filteredList.isEmpty()) {
             // Toast.makeText(context, "No Data Found..", Toast.LENGTH_SHORT).show()
         } else {
-           // Log.d("TAG1",filteredList.toString())
             adapter.filterList(filteredList)
-
         }
     }
-
-
-
 }
