@@ -11,6 +11,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class MovieDetailViewModel : ViewModel() {
     private val disposable = CompositeDisposable()
@@ -34,5 +36,17 @@ class MovieDetailViewModel : ViewModel() {
                     }
                 })
         )
+    }
+
+    fun splitDate(date : String): String{
+        val list = date.split("-")
+        return list.get(0)
+    }
+
+    fun vote(vote : String) : String{
+        val float = vote.toFloat()
+        val df = DecimalFormat("#.#")
+        df.roundingMode = RoundingMode.DOWN
+        return df.format(float).toString()
     }
 }

@@ -1,6 +1,5 @@
 package com.keremkulac.movieapp.adapter
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -8,11 +7,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
-import com.keremkulac.movieapp.databinding.ItemMovieBinding
 import com.keremkulac.movieapp.databinding.SearchItemMovieBinding
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
-import com.keremkulac.movieapp.view.MovieDetailFragment
 
 class SearchAdapter(val activity : FragmentActivity,var list : ArrayList<Movie>) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 

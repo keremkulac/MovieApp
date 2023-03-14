@@ -40,7 +40,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
         if(arg.release_date == null){
             binding.movieReleaseDate.text = "Unknown"
         }else{
-            binding.movieReleaseDate.text = splitDate(arg.release_date)
+            binding.movieReleaseDate.text = viewModel.splitDate(arg.release_date)
         }
         binding.movieOverview.text = arg.overview
         if(arg.original_title == null){
@@ -52,20 +52,10 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
         Log.d("TAG1",arg.id.toString())
 
         binding.movieImage.downloadFromUrl(arg.poster_path, placeHolderProgressBar(requireContext()))
-        binding.movieRate.text = vote(arg.vote_average.toString())
+        binding.movieRate.text = viewModel.vote(arg.vote_average.toString())
     }
 
-    private fun splitDate(date : String): String{
-        val list = date.split("-")
-        return list.get(0)
-    }
 
-    private fun vote(vote : String) : String{
-        val float = vote.toFloat()
-        val df = DecimalFormat("#.#")
-        df.roundingMode = RoundingMode.DOWN
-        return df.format(float).toString()
-    }
 
     private fun observeLiveData(list : ArrayList<Int>,textView : TextView){
         viewModel.genres.observe(viewLifecycleOwner, Observer {Genres->

@@ -7,21 +7,20 @@
             name="movie"
             type="com.keremkulac.movieapp.Movie" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="wrap_content">
 
 
         <ImageView
             android:id="@+id/moviePoster"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/imageview_corner"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="400dp"
+            android:background="@drawable/imageview_corner" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

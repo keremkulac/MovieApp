@@ -15,15 +15,16 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
         bottomNav.menu.findItem(R.id.search).isChecked = true
-        replaceFragment(SearchFragment(),this.supportFragmentManager,R.id.searchFrameLayout)
         bottomNavMenuSelect()
+        replaceFragment(SearchFragment(arrayListOf()),supportFragmentManager,R.id.searchFrameLayout)
     }
+
+
 
     private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager, layout :Int){
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(layout,fragment)
         fragmentTransaction.commit()
-
     }
 
     private fun bottomNavMenuSelect(){
@@ -43,6 +44,10 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
+
+
+
+
 
 
 }
