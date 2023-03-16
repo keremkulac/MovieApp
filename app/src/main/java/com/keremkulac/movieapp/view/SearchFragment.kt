@@ -1,7 +1,6 @@
 package com.keremkulac.movieapp.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -14,65 +13,43 @@ import com.keremkulac.movieapp.databinding.FragmentSearchBinding
 import com.keremkulac.movieapp.viewmodel.SearchViewModel
 
 
-class SearchFragment(var movieList : ArrayList<Movie>) : Fragment(),SearchGenreAdapter.ClickListener {
+class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener {
 
     private lateinit var binding : FragmentSearchBinding
     private lateinit var viewModel : SearchViewModel
-    private lateinit var list : ArrayList<Movie>
-    private lateinit var adapter : SearchAdapter
-    private lateinit var adapter2 : SearchGenreAdapter
+    private lateinit var searchAdapter : SearchAdapter
+    private lateinit var genreAdapter : SearchGenreAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentSearchBinding.inflate(inflater)
        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
-        list = ArrayList()
         viewModel = SearchViewModel()
-       // viewModel.combineMovies()
-
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setSearchMenu()
-
     }
-
-
 
    private fun createMovieRecyclerView(list : ArrayList<Movie>){
-
-       adapter = SearchAdapter(requireActivity(),list)
+       searchAdapter = SearchAdapter(list)
        binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
-       binding.searchRecyclerView.adapter = adapter
+       binding.searchRecyclerView.adapter = searchAdapter
 
    }
-    private fun createGenreRecyclerView(list : ArrayList<String>){
-        adapter2 = SearchGenreAdapter(this,list)
+    private fun createGenreRecyclerView(list : ArrayList<String>,hm : HashMap<String,ArrayList<Movie>>){
+        genreAdapter = SearchGenreAdapter(this,list,hm)
         binding.movieGenresRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
-        binding.movieGenresRecyclerView.adapter = adapter2
-
+        binding.movieGenresRecyclerView.adapter = genreAdapter
     }
 
-
-
     private fun setSearchMenu(){
-        binding.searchView.setOnCloseListener {
-          //  Log.d("tag12", "kapatıldı")
-         //   viewModel.setViewPager(binding.viewPager,binding.tabs,requireActivity().supportFragmentManager,viewLifecycleOwner, arrayListOf())
-
-            false
-        }
-
         binding.searchView.setOnSearchClickListener {
             viewModel.combineMovies()
-            createGenreRecyclerView(viewModel.getNames())
+            createGenreRecyclerView(viewModel.getNames(),viewModel.getGenre())
+            createMovieRecyclerView(viewModel.allMovieListHm["All"]!!)
         }
-        binding.searchView.setOnClickListener{
-         //  Log.d("TAGG","ACILDI")
-         //  viewModel.setViewPager(binding.viewPager,binding.tabs,requireActivity().supportFragmentManager,viewLifecycleOwner)
-       }
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
 
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -80,64 +57,28 @@ class SearchFragment(var movieList : ArrayList<Movie>) : Fragment(),SearchGenreA
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-             //  viewModel.setViewPager(binding.viewPager,binding.tabs,requireActivity().supportFragmentManager,viewLifecycleOwner)
+                viewModel.filter(newText,searchAdapter)
+                viewModel.movieFoundError.observe(viewLifecycleOwner) {
+                    if (it) {
+                        binding.movieNotFound.visibility = View.VISIBLE
+                        binding.searchRecyclerView.visibility = View.INVISIBLE
+                    } else {
+                        binding.movieNotFound.visibility = View.INVISIBLE
+                        binding.searchRecyclerView.visibility = View.VISIBLE
+                    }
+                }
                 return true
             }
-
         })
-        /*
-        val menuHost : MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_search,menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.actionSearch -> {
-                        menuItem.setOnActionExpandListener(object :
-                            MenuItem.OnActionExpandListener {
-                            override fun onMenuItemActionExpand(p0: MenuItem): Boolean {
-                              //  binding.searchRecyclerView.visibility =  View.VISIBLE
-                                viewModel.combineMovies(binding.viewPager,binding.tabs,requireActivity().supportFragmentManager,viewLifecycleOwner)
-
-
-                                return true
-                            }
-
-                            override fun onMenuItemActionCollapse(p0: MenuItem): Boolean {
-                             //   binding.searchRecyclerView.visibility = View.GONE
-                                return true
-                            }
-                        })
-
-                        val searchView = menuItem.actionView as androidx.appcompat.widget.SearchView
-                        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
-                            override fun onQueryTextSubmit(query: String?): Boolean {
-                                return false
-                            }
-                            override fun onQueryTextChange(newText: String): Boolean {
-                             //   binding.searchRecyclerView.visibility =  View.VISIBLE
-                                viewModel.filter(newText,adapter)
-                                return true
-                            }
-                        })
-                        true
-                    }
-                    else -> false
-                }
-            }
-        },viewLifecycleOwner, Lifecycle.State.RESUMED)
-
-         */
-
     }
 
     override fun ClickedItem(genre: String) {
-        Log.d("W4343",genre)
-
         val list = viewModel.getGenre()[genre]!!
         createMovieRecyclerView(list)
-        Log.d("4334534",viewModel.getGenre()[genre]!!.size.toString())
+        if(viewModel.getGenre()[genre]!!.size == 0){
+            binding.movieNotFound.visibility = View.VISIBLE
+        }else{
+            binding.movieNotFound.visibility = View.INVISIBLE
+        }
     }
 }

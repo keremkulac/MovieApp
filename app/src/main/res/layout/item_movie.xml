@@ -19,7 +19,8 @@
         android:layout_height="200dp"
         app:shapeAppearanceOverlay="@style/Circular"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/tag" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

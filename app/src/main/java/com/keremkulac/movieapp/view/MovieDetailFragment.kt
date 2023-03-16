@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.databinding.FragmentMovieDetailBinding
@@ -15,8 +14,6 @@ import com.keremkulac.movieapp.model.Genre
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import com.keremkulac.movieapp.viewmodel.MovieDetailViewModel
-import java.math.RoundingMode
-import java.text.DecimalFormat
 
 
 class MovieDetailFragment : BottomSheetDialogFragment() {
@@ -27,7 +24,6 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieDetailBinding.inflate(inflater)
         viewModel = MovieDetailViewModel()
-
         return binding.root
     }
 
@@ -49,7 +45,6 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
             binding.movieName.text = arg.original_title
 
         }
-        Log.d("TAG1",arg.id.toString())
 
         binding.movieImage.downloadFromUrl(arg.poster_path, placeHolderProgressBar(requireContext()))
         binding.movieRate.text = viewModel.vote(arg.vote_average.toString())
@@ -58,18 +53,18 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
 
 
     private fun observeLiveData(list : ArrayList<Int>,textView : TextView){
-        viewModel.genres.observe(viewLifecycleOwner, Observer {Genres->
+        viewModel.genres.observe(viewLifecycleOwner) { Genres ->
             val builder = StringBuilder()
             genres = Genres
-            for(item in list){
-                for(genreItem in genres){
-                    if(genreItem.id==item) {
+            for (item in list) {
+                for (genreItem in genres) {
+                    if (genreItem.id == item) {
                         builder.append(genreItem.name)
                         builder.append("  ")
                     }
                 }
             }
-            textView.text= builder.toString()
-        })
+            textView.text = builder.toString()
+        }
     }
 }

@@ -14,7 +14,8 @@
         android:layout_margin="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/tag" />
 
     <TextView
         android:id="@+id/movieGenres"
@@ -28,7 +29,8 @@
         android:inputType="textMultiLine"
         android:maxLines="2"
         app:layout_constraintStart_toEndOf="@+id/movieImage"
-        app:layout_constraintTop_toBottomOf="@+id/movieName" />
+        app:layout_constraintTop_toBottomOf="@+id/movieName"
+        tools:ignore="TextViewEdits" />
 
     <TextView
         android:id="@+id/movieReleaseDate"
@@ -47,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginTop="12dp"
-        android:text="10"
+        android:text="@string/_10"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/imageViewIcon"
         app:layout_constraintTop_toBottomOf="@+id/movieGenres" />
@@ -60,7 +62,8 @@
         android:layout_marginTop="14dp"
         android:src="@drawable/ic_movie_rate"
         app:layout_constraintStart_toEndOf="@+id/movieReleaseDate"
-        app:layout_constraintTop_toBottomOf="@+id/movieGenres" />
+        app:layout_constraintTop_toBottomOf="@+id/movieGenres"
+        android:contentDescription="@string/tag" />
 
     <TextView
         android:id="@+id/movieOverview"
@@ -95,5 +98,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/movieImage"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextViewEdits" />
 </androidx.constraintlayout.widget.ConstraintLayout>

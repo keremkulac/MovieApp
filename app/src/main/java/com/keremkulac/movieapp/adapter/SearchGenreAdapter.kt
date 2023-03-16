@@ -5,9 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
+import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 
-class SearchGenreAdapter(var clickListener : ClickListener, val genreNames: ArrayList<String>): RecyclerView.Adapter<SearchGenreAdapter.SearchGenreAdapterViewHolder>(){
+class SearchGenreAdapter(private var clickListener : ClickListener,
+                         private val genreNames: ArrayList<String>,
+                         private val hm : HashMap<String,ArrayList<Movie>>): RecyclerView.Adapter<SearchGenreAdapter.SearchGenreAdapterViewHolder>(){
 
     class SearchGenreAdapterViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         var button : Button
@@ -18,7 +21,7 @@ class SearchGenreAdapter(var clickListener : ClickListener, val genreNames: Arra
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchGenreAdapterViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_genre,parent,false)
         return SearchGenreAdapterViewHolder(view)
     }
 
@@ -27,14 +30,16 @@ class SearchGenreAdapter(var clickListener : ClickListener, val genreNames: Arra
     }
 
     override fun onBindViewHolder(holder: SearchGenreAdapterViewHolder, position: Int) {
-        holder.button.text = genreNames[position]
+        holder.button.text = genreNames[position]+"(${hm[genreNames[position]]!!.size})"
         holder.button.setOnClickListener {
-            clickListener.ClickedItem(holder.button.text.toString())
+           // val parts = holder.button.text.split("(")
+            clickListener.ClickedItem(genreNames[position])
         }
     }
 
     interface ClickListener {
         fun ClickedItem(genre : String)
     }
+
 }
 

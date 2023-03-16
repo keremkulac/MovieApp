@@ -1,10 +1,7 @@
 package com.keremkulac.movieapp.viewmodel
 
 import android.util.Log
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.adapter.SearchAdapter
@@ -18,9 +15,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class SearchViewModel : ViewModel(){
-
+    val movieFoundError = MutableLiveData<Boolean>()
     private val disposable = CompositeDisposable()
     var popularMovies = MutableLiveData<ArrayList<Movie>>()
     var trendMovies = MutableLiveData<ArrayList<Movie>>()
@@ -29,7 +29,6 @@ class SearchViewModel : ViewModel(){
     private val trendMovieApiImp = TrendMovieApiImp()
     private val movieGenreApiImp = MovieGenreApiImp()
     private  var combinedList : ArrayList<Movie>
-    //  var allMovies = MutableLiveData<ArrayList<Movie>>()
     private  var actionMovieList = ArrayList<Movie>()
     private  var adventureMovieList = ArrayList<Movie>()
     private  var animationMovieList  = ArrayList<Movie>()
@@ -50,7 +49,6 @@ class SearchViewModel : ViewModel(){
     private  var warMovieList = ArrayList<Movie>()
     private  var westernMovieList = ArrayList<Movie>()
     var allMovieListHm = HashMap<String,ArrayList<Movie>>()
-
     init {
 
         getPopularMovies()
@@ -110,8 +108,7 @@ class SearchViewModel : ViewModel(){
 
 
     fun combineMovies(){
-        //Log.d("TAG1","GİRDİ")
-        var sameMovies = ArrayList<Movie>()
+        val sameMovies = ArrayList<Movie>()
             for (trendMovieItems in trendMovies.value!!) {
                 for (popularMovieItems in popularMovies.value!!) {
                     if (popularMovieItems.id != null && trendMovieItems.id != null) {
@@ -123,10 +120,10 @@ class SearchViewModel : ViewModel(){
             }
             val deletedList = mutableListOf<Movie>()
             deletedList.addAll(trendMovies.value!!)
-            for (i in trendMovies.value!!){
-                for (x in sameMovies.indices){
-                    if(i.id == sameMovies[x].id){
-                        deletedList.remove(i)
+            for (movie in trendMovies.value!!){
+                for (sameMovie in sameMovies.indices){
+                    if(movie.id == sameMovies[sameMovie].id){
+                        deletedList.remove(movie)
                     }
                 }
             }
@@ -139,8 +136,8 @@ class SearchViewModel : ViewModel(){
    private fun movieGenreCount(allMovieList : ArrayList<Movie>){
         for (movie in allMovieList){
             if(movie.genre_ids != null) {
-                for (item in movie.genre_ids){
-                    when(item){
+                for (movieID in movie.genre_ids){
+                    when(movieID){
                         28-> actionMovieList.add(movie)
                         12-> adventureMovieList.add(movie)
                         16-> animationMovieList.add(movie)
@@ -164,6 +161,7 @@ class SearchViewModel : ViewModel(){
                 }
             }
         }
+       allMovieListHm["All"] = allMovieList
        allMovieListHm["Action"] = actionMovieList
        allMovieListHm["Adventure"] = adventureMovieList
        allMovieListHm["Comedy"] = comedyMovieList
@@ -183,63 +181,34 @@ class SearchViewModel : ViewModel(){
        allMovieListHm["Thriller"] = thrillerMovieList
        allMovieListHm["War"] = warMovieList
        allMovieListHm["Western"] = westernMovieList
-
-     //  allMovieListHm.clear()
    }
 
-    fun filter(text: String,adapter: SearchAdapter){
-
+    fun filter(text: String?,adapter : SearchAdapter){
         val filteredList: ArrayList<Movie> = ArrayList()
-        for (item in combinedList) {
-            if(item.original_title != null){
-                if (item.original_title.toLowerCase().contains(text.toLowerCase())) {
-                    filteredList.add(item)
+        if(text != null) {
+            for (listItem in combinedList) {
+                if (listItem.original_title != null) {
+                    if (listItem.original_title.lowercase(Locale.ROOT).contains(text.lowercase(Locale.ROOT))) {
+                        filteredList.add(listItem)
+                    }
                 }
             }
         }
 
         if (filteredList.isEmpty()) {
-            // Toast.makeText(context, "No Data Found..", Toast.LENGTH_SHORT).show()
+            movieFoundError.value = true
+
         } else {
             adapter.filterList(filteredList)
+            movieFoundError.value = false
         }
-    }
-
-    fun setViewPager(viewPager: ViewPager, tabLayout: TabLayout, fragmentManager: FragmentManager, viewLifecycleOwner: LifecycleOwner){
-       // val adapter = SearchViewPagerAdapter(fragmentManager)
-
-       // adapter.addFragment(SearchFragment(combinedList),"All(${combinedList.size})")
-        //adapter.addFragment(SearchFragment(actionMovieList.value!!),"Action")
-        //adapter.addFragment(SearchFragment(adventureMovieList.value!!),"Adventure")
-       // adapter.addFragment(SearchFragment(animationMovieList.value!!),"Animation")
-       // adapter.addFragment(SearchFragment(comedyMovieList.value!!),"Comedy")
-        //   adapter.addFragment(SearchFragment(crimeMovieList.value!!),"Crime")
-        /*
-        adapter.addFragment(SearchFragment(list),"Documentary")
-        adapter.addFragment(SearchFragment(list),"Drama")
-        adapter.addFragment(SearchFragment(list),"Family")
-        adapter.addFragment(SearchFragment(list),"Fantasy")
-        adapter.addFragment(SearchFragment(list),"History")
-        adapter.addFragment(SearchFragment(list),"Horror")
-        adapter.addFragment(SearchFragment(list),"Music")
-        adapter.addFragment(SearchFragment(list),"Mystery")
-        adapter.addFragment(SearchFragment(list),"Romance")
-        adapter.addFragment(SearchFragment(list),"Science Fiction")
-        adapter.addFragment(SearchFragment(list),"TV Movie")
-        adapter.addFragment(SearchFragment(list),"Thriller")
-        adapter.addFragment(SearchFragment(list),"War")
-        adapter.addFragment(SearchFragment(list),"Western")
-         */
-       // viewPager.adapter = adapter
-      //  viewPager.offscreenPageLimit = 7
-       // tabLayout.setupWithViewPager(viewPager)
-
     }
 
     fun getNames() : ArrayList<String>{
         val genreNames = ArrayList<String>()
-        for(item in genres.value!!){
-            genreNames.add(item.name)
+        genreNames.add("All")
+        for(genre in genres.value!!){
+            genreNames.add(genre.name)
         }
         return genreNames
     }

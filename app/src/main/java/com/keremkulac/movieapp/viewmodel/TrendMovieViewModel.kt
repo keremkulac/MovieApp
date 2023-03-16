@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.MovieResult
-import com.keremkulac.movieapp.adapter.TrendMovieAdapter
 import com.keremkulac.movieapp.service.TrendMovieApiImp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -35,22 +34,4 @@ class TrendMovieViewModel {
                 })
         )
     }
-
-    fun filter(text: String,trendMovieList: ArrayList<Movie>,adapter: TrendMovieAdapter) {
-        val filteredList: ArrayList<Movie> = ArrayList()
-        for (item in trendMovieList) {
-            if (item.original_title.toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item)
-                Log.d("TAG1",filteredList.toString())
-
-            }
-        }
-        if (filteredList.isEmpty()) {
-            // Toast.makeText(context, "No Data Found..", Toast.LENGTH_SHORT).show()
-        } else {
-            adapter.filterList(filteredList)
-        }
-    }
-
-
 }

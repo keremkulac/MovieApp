@@ -13,10 +13,10 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        bottomNav = findViewById(R.id.bottomNav)
         bottomNav.menu.findItem(R.id.search).isChecked = true
         bottomNavMenuSelect()
-        replaceFragment(SearchFragment(arrayListOf()),supportFragmentManager,R.id.searchFrameLayout)
+        replaceFragment(SearchFragment(),supportFragmentManager,R.id.searchFrameLayout)
     }
 
 
@@ -44,10 +44,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
 
 
 }

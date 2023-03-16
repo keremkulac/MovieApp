@@ -8,4 +8,7 @@
     <string name="movie_name">Movie Name</string>
     <string name="trend_movies">Trend Movies</string>
     <string name="popular_movies">Popular Movies</string>
+    <string name="tag">TAG</string>
+    <string name="_10">10</string>
+    <string name="movieNotFoundMessage">Film bulunamadı</string>
 </resources>

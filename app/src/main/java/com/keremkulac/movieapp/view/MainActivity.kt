@@ -17,7 +17,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         popularMovieViewModel = PopularMovieViewModel()
-        bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        bottomNav = findViewById(R.id.bottomNav)
+        bottomNav.menu.findItem(R.id.home).isChecked = true
         replaceFragment(PopularMovieFragment(),this.supportFragmentManager,R.id.popularTrendFrameLayout)
         replaceFragment(TrendMovieFragment(),this.supportFragmentManager,R.id.trendTrendFrameLayout)
         bottomNavMenuSelect()
