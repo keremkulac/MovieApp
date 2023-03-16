@@ -6,6 +6,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F307274D"
     tools:context=".view.MainActivity">
 
 
@@ -45,7 +46,11 @@
     </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:background="#07274D"
         android:id="@+id/bottomNav"
+        app:itemTextColor="@drawable/bottom_nav_icon"
+        app:itemIconTint="@drawable/bottom_nav_icon"
+        android:backgroundTint="@null"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"

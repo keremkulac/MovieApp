@@ -51,11 +51,7 @@ class TrendMovieAdapter (
                 movieDetailFragment.arguments = args
                 movieDetailFragment.show(activity.supportFragmentManager,"TAG")
                 fragmentTransaction.commit()
+
             }
         }
-    fun filterList(filterlist: ArrayList<Movie>) {
-        trendMovieList = filterlist
-        notifyDataSetChanged()
-    }
-
 }

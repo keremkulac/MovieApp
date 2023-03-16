@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         popularMovieViewModel = PopularMovieViewModel()
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.menu.findItem(R.id.home).isChecked = true
+        bottomNav.menu.findItem(R.id.search).isChecked = false
         replaceFragment(PopularMovieFragment(),this.supportFragmentManager,R.id.popularTrendFrameLayout)
         replaceFragment(TrendMovieFragment(),this.supportFragmentManager,R.id.trendTrendFrameLayout)
         bottomNavMenuSelect()

@@ -5,11 +5,13 @@
     android:layout_height="wrap_content">
 
     <Button
+        android:textColor="#BFFFFFFF"
         android:background="@drawable/genre_button"
         android:id="@+id/itemButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="5dp"
+        android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

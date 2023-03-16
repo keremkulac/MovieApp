@@ -38,17 +38,26 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener {
        binding.searchRecyclerView.adapter = searchAdapter
 
    }
-    private fun createGenreRecyclerView(list : ArrayList<String>,hm : HashMap<String,ArrayList<Movie>>){
-        genreAdapter = SearchGenreAdapter(this,list,hm)
+    private fun createGenreRecyclerView(list : ArrayList<String>, genreWithSizeList : ArrayList<String>){
+        genreAdapter = SearchGenreAdapter(this,list,genreWithSizeList)
         binding.movieGenresRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         binding.movieGenresRecyclerView.adapter = genreAdapter
     }
 
     private fun setSearchMenu(){
         binding.searchView.setOnSearchClickListener {
+            binding.movieGenresRecyclerView.visibility = View.VISIBLE
             viewModel.combineMovies()
-            createGenreRecyclerView(viewModel.getNames(),viewModel.getGenre())
+            val list = viewModel.getNames()
+            viewModel.genreWithSize.observe(viewLifecycleOwner) {
+                createGenreRecyclerView(list, it)
+            }
             createMovieRecyclerView(viewModel.allMovieListHm["All"]!!)
+        }
+        binding.searchView.setOnCloseListener {
+            viewModel.clearList()
+            binding.movieGenresRecyclerView.visibility = View.INVISIBLE
+            false
         }
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
 

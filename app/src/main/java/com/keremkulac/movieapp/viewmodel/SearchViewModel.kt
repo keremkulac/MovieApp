@@ -49,6 +49,7 @@ class SearchViewModel : ViewModel(){
     private  var warMovieList = ArrayList<Movie>()
     private  var westernMovieList = ArrayList<Movie>()
     var allMovieListHm = HashMap<String,ArrayList<Movie>>()
+    var genreWithSize = MutableLiveData<java.util.ArrayList<String>>()
     init {
 
         getPopularMovies()
@@ -174,6 +175,7 @@ class SearchViewModel : ViewModel(){
        allMovieListHm["Fantasy"] = fantasyMovieList
        allMovieListHm["History"] = historyMovieList
        allMovieListHm["Horror"] = horrorMovieList
+       allMovieListHm["Music"] = musicMovieList
        allMovieListHm["Mystery"] = mysteryMovieList
        allMovieListHm["Romance"] = romanceMovieList
        allMovieListHm["Science Fiction"] = scienceFictionMovieList
@@ -206,10 +208,20 @@ class SearchViewModel : ViewModel(){
 
     fun getNames() : ArrayList<String>{
         val genreNames = ArrayList<String>()
+        val sizeList = ArrayList<String>()
+        var size : String
         genreNames.add("All")
+        size = allMovieListHm["All"]!!.size.toString()
+        sizeList.add("All"+"(${size})")
         for(genre in genres.value!!){
             genreNames.add(genre.name)
+            if(allMovieListHm[genre.name] != null){
+                size = allMovieListHm[genre.name]!!.size.toString()
+                sizeList.add(genre.name+"(${size})")
+            }
         }
+
+        genreWithSize.value = sizeList
         return genreNames
     }
 
@@ -217,6 +229,10 @@ class SearchViewModel : ViewModel(){
     fun getGenre() : HashMap<String,ArrayList<Movie>>{
         return allMovieListHm
     }
-
+    fun clearList(){
+        for (genre in getNames()) {
+           allMovieListHm[genre]!!.clear()
+        }
+    }
 
 }

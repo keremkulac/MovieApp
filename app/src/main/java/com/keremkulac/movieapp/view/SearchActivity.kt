@@ -15,6 +15,8 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.menu.findItem(R.id.search).isChecked = true
+        bottomNav.menu.findItem(R.id.home).isChecked = false
+
         bottomNavMenuSelect()
         replaceFragment(SearchFragment(),supportFragmentManager,R.id.searchFrameLayout)
     }
