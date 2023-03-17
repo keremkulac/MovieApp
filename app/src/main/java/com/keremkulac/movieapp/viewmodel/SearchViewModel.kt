@@ -183,6 +183,7 @@ class SearchViewModel : ViewModel(){
        allMovieListHm["Thriller"] = thrillerMovieList
        allMovieListHm["War"] = warMovieList
        allMovieListHm["Western"] = westernMovieList
+
    }
 
     fun filter(text: String?,adapter : SearchAdapter){

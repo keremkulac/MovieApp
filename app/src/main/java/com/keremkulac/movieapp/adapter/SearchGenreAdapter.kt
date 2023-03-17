@@ -7,9 +7,9 @@ import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.keremkulac.movieapp.R
 
-class SearchGenreAdapter(private var clickListener : ClickListener,
+class SearchGenreAdapter(private val clickListener : ClickListener,
                          private val genreNames: ArrayList<String>,
-                         private var list : ArrayList<String>): RecyclerView.Adapter<SearchGenreAdapter.SearchGenreAdapterViewHolder>(){
+                         private val list : ArrayList<String>): RecyclerView.Adapter<SearchGenreAdapter.SearchGenreAdapterViewHolder>(){
 
     class SearchGenreAdapterViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         var button : Button

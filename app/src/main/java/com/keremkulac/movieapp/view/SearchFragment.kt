@@ -7,13 +7,14 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.keremkulac.movieapp.Movie
+import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.adapter.SearchGenreAdapter
 import com.keremkulac.movieapp.adapter.SearchAdapter
 import com.keremkulac.movieapp.databinding.FragmentSearchBinding
 import com.keremkulac.movieapp.viewmodel.SearchViewModel
 
 
-class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener {
+class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter.ClickListener {
 
     private lateinit var binding : FragmentSearchBinding
     private lateinit var viewModel : SearchViewModel
@@ -33,7 +34,7 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener {
     }
 
    private fun createMovieRecyclerView(list : ArrayList<Movie>){
-       searchAdapter = SearchAdapter(list)
+       searchAdapter = SearchAdapter(this,list)
        binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
        binding.searchRecyclerView.adapter = searchAdapter
 
@@ -43,6 +44,7 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener {
         binding.movieGenresRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         binding.movieGenresRecyclerView.adapter = genreAdapter
     }
+
 
     private fun setSearchMenu(){
         binding.searchView.setOnSearchClickListener {
@@ -89,5 +91,15 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener {
         }else{
             binding.movieNotFound.visibility = View.INVISIBLE
         }
+    }
+
+    override fun ClickedMovieItem(movie: Movie) {
+        val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+        val args = Bundle()
+        val searchMovieDetailFragment = SearchMovieDetailFragment()
+        args.putSerializable("movie",movie)
+        searchMovieDetailFragment.arguments = args
+        fragmentTransaction.replace(R.id.searchFrameLayout,searchMovieDetailFragment)
+        fragmentTransaction.commit()
     }
 }

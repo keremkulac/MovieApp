@@ -10,7 +10,9 @@ import com.keremkulac.movieapp.databinding.ItemSearchMovieBinding
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 
-class SearchAdapter(var list : ArrayList<Movie>) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
+class SearchAdapter(
+    private val clickListener : ClickListener,
+    var list : ArrayList<Movie>) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     class SearchViewHolder(val binding : ItemSearchMovieBinding ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(movieList : Movie){
@@ -35,20 +37,15 @@ class SearchAdapter(var list : ArrayList<Movie>) : RecyclerView.Adapter<SearchAd
             placeHolderProgressBar(holder.itemView.context)
         )
         holder.itemView.setOnClickListener {
-            /*
-            val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
-            val args = Bundle()
-            val movieDetailFragment = MovieDetailFragment()
-            args.putSerializable("movie",list[position])
-            movieDetailFragment.arguments = args
-            movieDetailFragment.show(activity.supportFragmentManager,"TAG")
-            fragmentTransaction.commit()
-
-             */
+            clickListener.ClickedMovieItem(list[position])
         }
     }
     fun filterList(filterList: ArrayList<Movie>) {
         list = filterList
         notifyDataSetChanged()
+    }
+
+    interface ClickListener {
+        fun ClickedMovieItem(movie : Movie)
     }
 }
