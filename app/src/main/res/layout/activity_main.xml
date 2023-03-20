@@ -9,36 +9,65 @@
     android:background="#F307274D"
     tools:context=".view.MainActivity">
 
-
-
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/tag"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        tools:layout_editor_absoluteX="0dp">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/latestMoviePoster"
+                android:layout_width="match_parent"
+                android:layout_height="450dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="-40dp" />
+
+            <View
+
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginBottom="-40dp"
+                android:background="@drawable/latest_movie_gradient"
+                app:layout_constraintBottom_toBottomOf="@+id/latestMoviePoster"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Latest in movie category"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/latestMoviePoster" />
+
             <FrameLayout
-                android:id="@+id/popularTrendFrameLayout"
+                android:id="@+id/popularFrameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
             <FrameLayout
-                android:id="@+id/trendTrendFrameLayout"
+                android:id="@+id/trendFrameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="240dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/popularTrendFrameLayout" />
+                app:layout_constraintTop_toTopOf="@+id/popularFrameLayout" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
