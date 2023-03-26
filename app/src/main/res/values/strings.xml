@@ -17,4 +17,8 @@
     <string name="genre">Genre</string>
     <string name="release_date">Release Date</string>
     <string name="imdb">IMDB</string>
+    <string name="upcoming_movies">Upcoming Movies</string>
+    <string name="popular_tv_series">Popular TV Series</string>
+    <string name="latest_tv_series">Latest TV Series</string>
+    <string name="top_rated_tv_series">Top Rated TV Series</string>
 </resources>

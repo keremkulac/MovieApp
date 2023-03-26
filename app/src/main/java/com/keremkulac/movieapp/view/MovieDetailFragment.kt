@@ -12,6 +12,7 @@ import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.databinding.FragmentMovieDetailBinding
 import com.keremkulac.movieapp.model.Genre
+import com.keremkulac.movieapp.model.TvSeries
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import com.keremkulac.movieapp.viewmodel.MovieDetailViewModel
@@ -22,7 +23,9 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding : FragmentMovieDetailBinding
     private lateinit var viewModel : MovieDetailViewModel
     private var genres = ArrayList<Genre>()
+    private var tvSeriesGenre = ArrayList<Genre>()
     private var movie : Movie? = null
+    private var tvSeries : TvSeries? = null
     private  var latestMovie : LatestMovie? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieDetailBinding.inflate(inflater)
@@ -35,16 +38,32 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
        // val  arg =  requireArguments().getSerializable("movie") as Movie
       getMovie()
         getLatestMovie()
+        getTvSeries()
     }
 
 
 
     private fun observeLiveData(list : ArrayList<Int>,textView : TextView){
-        viewModel.genres.observe(viewLifecycleOwner) { Genres ->
+        viewModel.movieGenres.observe(viewLifecycleOwner) { movieGenres ->
             val builder = StringBuilder()
-            genres = Genres
+            genres = movieGenres
             for (item in list) {
                 for (genreItem in genres) {
+                    if (genreItem.id == item) {
+                        builder.append(genreItem.name)
+                        builder.append("  ")
+                    }
+                }
+            }
+            textView.text = builder.toString()
+        }
+    }
+    private fun deneme1(list : ArrayList<Int>,textView : TextView){
+        viewModel.tvSeriesGenres.observe(viewLifecycleOwner){tvSeriesGenres->
+            val builder = StringBuilder()
+            tvSeriesGenre = tvSeriesGenres
+            for (item in list) {
+                for (genreItem in tvSeriesGenres) {
                     if (genreItem.id == item) {
                         builder.append(genreItem.name)
                         builder.append("  ")
@@ -80,7 +99,6 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private fun getLatestMovie(){
         latestMovie = requireArguments().getSerializable("latestMovie") as LatestMovie?
         if(latestMovie != null){
-          //  observeLiveData(latestMovie!!.genre_ids,binding.movieGenres)
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
             if(latestMovie!!.release_date == null){
                 binding.movieReleaseDate.text = "Unknown"
@@ -97,6 +115,29 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
 
             binding.movieImage.downloadFromUrl(latestMovie!!.poster_path, placeHolderProgressBar(requireContext()))
             binding.movieRate.text = viewModel.vote(latestMovie!!.vote_average.toString())
+        }
+    }
+
+    private fun getTvSeries(){
+        tvSeries = requireArguments().getSerializable("tvSeries") as TvSeries?
+        if(tvSeries != null){
+            deneme1(tvSeries!!.genre_ids,binding.movieGenres)
+            binding.movieOverview.movementMethod= ScrollingMovementMethod()
+            if(tvSeries!!.first_air_date == null){
+                binding.movieReleaseDate.text = "Unknown"
+            }else{
+                binding.movieReleaseDate.text = tvSeries!!.first_air_date?.let { viewModel.splitDate(it) }
+            }
+            binding.movieOverview.text = tvSeries!!.overview
+            if(tvSeries!!.name == null){
+                binding.movieName.text = tvSeries!!.original_name
+            }else{
+                binding.movieName.text = tvSeries!!.name
+
+            }
+
+            binding.movieImage.downloadFromUrl(tvSeries!!.poster_path, placeHolderProgressBar(requireContext()))
+            binding.movieRate.text = viewModel.vote(tvSeries!!.vote_average.toString())
         }
     }
 

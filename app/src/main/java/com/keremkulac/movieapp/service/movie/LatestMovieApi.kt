@@ -1,4 +1,4 @@
-package com.keremkulac.movieapp.service
+package com.keremkulac.movieapp.service.movie
 
 import com.keremkulac.movieapp.LatestMovie
 import io.reactivex.Single

@@ -13,9 +13,9 @@ import com.keremkulac.movieapp.databinding.ItemMovieBinding
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 
-class PopularMovieAdapter(
+class MovieAdapter(
     var activity : FragmentActivity,
-    var popularMovieList : ArrayList<Movie>): RecyclerView.Adapter<PopularMovieAdapter.PopularViewHolder>(){
+    var popularMovieList : ArrayList<Movie>): RecyclerView.Adapter<MovieAdapter.PopularViewHolder>(){
 
     class PopularViewHolder (val binding : ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(popularMovies: Movie){

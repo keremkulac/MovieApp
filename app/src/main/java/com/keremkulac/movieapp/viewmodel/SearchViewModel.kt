@@ -5,11 +5,13 @@ import androidx.lifecycle.*
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.adapter.SearchAdapter
-import com.keremkulac.movieapp.model.Genre
-import com.keremkulac.movieapp.model.Genres
-import com.keremkulac.movieapp.service.MovieGenreApiImp
-import com.keremkulac.movieapp.service.PopularMovieApiImp
-import com.keremkulac.movieapp.service.TrendMovieApiImp
+import com.keremkulac.movieapp.model.*
+import com.keremkulac.movieapp.service.movie.MovieGenreApiImp
+import com.keremkulac.movieapp.service.movie.PopularMovieApiImp
+import com.keremkulac.movieapp.service.movie.TrendMovieApiImp
+import com.keremkulac.movieapp.service.movie.UpcomingMovieApiImp
+import com.keremkulac.movieapp.service.tv_series.PopularTvApiImp
+import com.keremkulac.movieapp.service.tv_series.TopRatedTvSeriesApiImp
 import com.keremkulac.movieapp.util.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,11 +26,20 @@ class SearchViewModel : ViewModel(){
     private val disposable = CompositeDisposable()
     var popularMovies = MutableLiveData<ArrayList<Movie>>()
     var trendMovies = MutableLiveData<ArrayList<Movie>>()
+    var upcomingMovies = MutableLiveData<ArrayList<Movie>>()
     var genres = MutableLiveData<ArrayList<Genre>>()
+    private val sameMovies = ArrayList<Movie>()
+    private val sameTvSeries = ArrayList<TvSeries>()
     private val popularMovieAPIImp = PopularMovieApiImp()
     private val trendMovieApiImp = TrendMovieApiImp()
     private val movieGenreApiImp = MovieGenreApiImp()
-    private  var combinedList : ArrayList<Movie>
+    private val upcomingMovieApiImp = UpcomingMovieApiImp ()
+    val topRatedTvSeries = MutableLiveData<ArrayList<TvSeries>>()
+    val popularTvSeries = MutableLiveData<ArrayList<TvSeries>>()
+    private val popularTvApiImp = PopularTvApiImp()
+    private val topRatedTvSeriesApiImp = TopRatedTvSeriesApiImp()
+    private  var combinedMovieList : ArrayList<Movie>
+    private  var combinedTvSeriesList : ArrayList<TvSeries>
     private  var actionMovieList = ArrayList<Movie>()
     private  var adventureMovieList = ArrayList<Movie>()
     private  var animationMovieList  = ArrayList<Movie>()
@@ -55,7 +66,11 @@ class SearchViewModel : ViewModel(){
         getPopularMovies()
         getTrendMovies()
         getGenres()
-        combinedList = ArrayList()
+        getUpcomingMovies()
+        getTopRatedTvSeries()
+        getPopularTvSeries()
+        combinedMovieList = ArrayList()
+        combinedTvSeriesList = ArrayList()
     }
 
     private fun getPopularMovies(){
@@ -76,13 +91,28 @@ class SearchViewModel : ViewModel(){
 
     private fun getTrendMovies(){
         disposable.add(
-            trendMovieApiImp.getTrendMovies("4af5441468ab90c82bbdf23668f9244f")
+            trendMovieApiImp.getTrendMovies(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
                     override fun onSuccess(t: MovieResult) {
                         trendMovies.value = t.movies
 
+                    }
+                    override fun onError(e: Throwable) {
+                        e.localizedMessage?.let { Log.d("TAG", it) }
+                    }
+                })
+        )
+    }
+    private fun getUpcomingMovies(){
+        disposable.add(
+            upcomingMovieApiImp.getUpcomingMovies(API_KEY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
+                    override fun onSuccess(t: MovieResult) {
+                        upcomingMovies.value = t.movies
                     }
                     override fun onError(e: Throwable) {
                         e.localizedMessage?.let { Log.d("TAG", it) }
@@ -107,30 +137,46 @@ class SearchViewModel : ViewModel(){
         )
     }
 
+    private fun getPopularTvSeries(){
+        disposable.add(
+            popularTvApiImp.getTvPopular(API_KEY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<TvSeriesResult>(){
+                    override fun onSuccess(t: TvSeriesResult) {
+                        popularTvSeries.value = t.tvSeries
+                    }
+                    override fun onError(e: Throwable) {
+                        e.localizedMessage?.let { Log.d("TAG", it) }
+                    }
+                })
+        )
+    }
+
+    private fun getTopRatedTvSeries(){
+        disposable.add(
+            topRatedTvSeriesApiImp.getTopRated(API_KEY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<TvSeriesResult>(){
+                    override fun onSuccess(t: TvSeriesResult) {
+                        topRatedTvSeries.value = t.tvSeries
+                    }
+                    override fun onError(e: Throwable) {
+                        e.localizedMessage?.let { Log.d("TAG", it) }
+                    }
+                })
+        )
+    }
+
 
     fun combineMovies(){
-        val sameMovies = ArrayList<Movie>()
-            for (trendMovieItems in trendMovies.value!!) {
-                for (popularMovieItems in popularMovies.value!!) {
-                    if (popularMovieItems.id != null && trendMovieItems.id != null) {
-                        if (popularMovieItems.id == trendMovieItems.id) {
-                            sameMovies.add(popularMovieItems)
-                        }
-                    }
-                }
-            }
-            val deletedList = mutableListOf<Movie>()
-            deletedList.addAll(trendMovies.value!!)
-            for (movie in trendMovies.value!!){
-                for (sameMovie in sameMovies.indices){
-                    if(movie.id == sameMovies[sameMovie].id){
-                        deletedList.remove(movie)
-                    }
-                }
-            }
-            combinedList.addAll(deletedList)
-            combinedList.addAll(popularMovies.value!!)
-         movieGenreCount(combinedList)
+        findSameMovies(trendMovies.value!!,popularMovies.value!!)
+        findSameMovies(trendMovies.value!!,upcomingMovies.value!!)
+        findSameMovies(upcomingMovies.value!!,popularMovies.value!!)
+        findSameTvSeries(topRatedTvSeries.value!!,popularTvSeries.value!!)
+        deleteSameMovies()
+        movieGenreCount(combinedMovieList)
     }
 
 
@@ -189,7 +235,7 @@ class SearchViewModel : ViewModel(){
     fun filter(text: String?,adapter : SearchAdapter){
         val filteredList: ArrayList<Movie> = ArrayList()
         if(text != null) {
-            for (listItem in combinedList) {
+            for (listItem in combinedMovieList) {
                 if (listItem.original_title != null) {
                     if (listItem.original_title.lowercase(Locale.ROOT).contains(text.lowercase(Locale.ROOT))) {
                         filteredList.add(listItem)
@@ -236,4 +282,65 @@ class SearchViewModel : ViewModel(){
         }
     }
 
+    private fun findSameMovies(list1: ArrayList<Movie>,list2: ArrayList<Movie>){
+        for (list1Item in list1) {
+            for (list2Item in list2) {
+                if (list2Item.id != null && list1Item.id != null) {
+                    if (list2Item.id == list1Item.id) {
+                        sameMovies.add(list2Item)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun deleteSameMovies(){
+        val deletedList = mutableListOf<Movie>()
+        deletedList.addAll(trendMovies.value!!)
+        for (movie in trendMovies.value!!){
+            for (sameMovie in sameMovies.indices){
+                if(movie.id == sameMovies[sameMovie].id){
+                    deletedList.remove(movie)
+                }
+            }
+        }
+        val deletedList1 = mutableListOf<Movie>()
+        deletedList1.addAll(popularMovies.value!!)
+        for (movie in popularMovies.value!!){
+            for (sameMovie in sameMovies.indices){
+                if(movie.id == sameMovies[sameMovie].id){
+                    deletedList1.remove(movie)
+                }
+            }
+        }
+        combinedMovieList.addAll(deletedList)
+        combinedMovieList.addAll(deletedList1)
+        combinedMovieList.addAll(upcomingMovies.value!!)
+    }
+
+    private fun deleteSameTvSeries(){
+        val deletedList = mutableListOf<TvSeries>()
+        deletedList.addAll(popularTvSeries.value!!)
+        for (tvSeries in popularTvSeries.value!!){
+            for (same in sameTvSeries.indices){
+                if(tvSeries.id == sameTvSeries[same].id){
+                    deletedList.remove(tvSeries)
+                }
+            }
+        }
+        combinedTvSeriesList.addAll(deletedList)
+        combinedTvSeriesList.addAll(topRatedTvSeries.value!!)
+    }
+
+    private fun findSameTvSeries(list1: ArrayList<TvSeries>,list2: ArrayList<TvSeries>){
+        for (list1Item in list1) {
+            for (list2Item in list2) {
+                if (list2Item.id != null && list1Item.id != null) {
+                    if (list2Item.id == list1Item.id) {
+                        sameTvSeries.add(list2Item)
+                    }
+                }
+            }
+        }
+    }
 }

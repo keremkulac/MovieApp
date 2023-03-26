@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.keremkulac.movieapp.model.Genre
 import com.keremkulac.movieapp.model.Genres
-import com.keremkulac.movieapp.service.MovieGenreApiImp
+import com.keremkulac.movieapp.service.movie.MovieGenreApiImp
 import com.keremkulac.movieapp.util.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

@@ -3,7 +3,9 @@ package com.keremkulac.movieapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.keremkulac.movieapp.LatestMovie
-import com.keremkulac.movieapp.service.LatestMovieApiImp
+import com.keremkulac.movieapp.model.LatestTvSeries
+import com.keremkulac.movieapp.service.movie.LatestMovieApiImp
+import com.keremkulac.movieapp.service.tv_series.LatestApiImp
 import com.keremkulac.movieapp.util.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -13,10 +15,13 @@ import io.reactivex.schedulers.Schedulers
 class MainActivityViewModel {
     private val disposable = CompositeDisposable()
     var latestMovies = MutableLiveData<LatestMovie>()
+    var latestTvSeries = MutableLiveData<LatestTvSeries>()
     private val latestMovieApiImp = LatestMovieApiImp()
+    private val latestApiImp = LatestApiImp()
 
     init {
         getLatestMovies()
+        getLatestTvSeries()
     }
     private fun getLatestMovies(){
         disposable.add(
@@ -28,6 +33,24 @@ class MainActivityViewModel {
                     override fun onSuccess(t: LatestMovie) {
                         latestMovies.value = t
                         Log.d("TASD",t.original_title)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        e.localizedMessage?.let { Log.d("TAG", it) }
+                    }
+                })
+        )
+    }
+
+    private fun getLatestTvSeries(){
+        disposable.add(
+            latestApiImp.getLatest(API_KEY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<LatestTvSeries>(){
+
+                    override fun onSuccess(t: LatestTvSeries) {
+                        latestTvSeries.value = t
                     }
 
                     override fun onError(e: Throwable) {

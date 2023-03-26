@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.keremkulac.movieapp.model.Genre
 import com.keremkulac.movieapp.model.Genres
-import com.keremkulac.movieapp.service.MovieGenreApiImp
+import com.keremkulac.movieapp.service.movie.MovieGenreApiImp
+import com.keremkulac.movieapp.service.tv_series.TvSeriesGenreApiImp
 import com.keremkulac.movieapp.util.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -16,19 +17,39 @@ import java.text.DecimalFormat
 
 class MovieDetailViewModel : ViewModel() {
     private val disposable = CompositeDisposable()
-    var genres = MutableLiveData<ArrayList<Genre>>()
+    var movieGenres = MutableLiveData<ArrayList<Genre>>()
+    var tvSeriesGenres = MutableLiveData<ArrayList<Genre>>()
     private val movieGenreApiImp = MovieGenreApiImp()
+    private val tvSeriesGenreApiImp = TvSeriesGenreApiImp()
     init {
-        getGenres()
+        getMovieGenres()
+        getTvSeriesGenres()
     }
-    private fun getGenres(){
+    private fun getMovieGenres(){
         disposable.add(
             movieGenreApiImp.getMovieGenre(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<Genres>(){
                     override fun onSuccess(t: Genres) {
-                        genres.value = t.genres
+                        movieGenres.value = t.genres
+
+                    }
+                    override fun onError(e: Throwable) {
+                        e.localizedMessage?.let { Log.d("TAG", it) }
+                    }
+                })
+        )
+    }
+
+    private fun getTvSeriesGenres(){
+        disposable.add(
+            tvSeriesGenreApiImp.getTvSeriesGenre(API_KEY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<Genres>(){
+                    override fun onSuccess(t: Genres) {
+                        tvSeriesGenres.value = t.genres
 
                     }
                     override fun onError(e: Throwable) {

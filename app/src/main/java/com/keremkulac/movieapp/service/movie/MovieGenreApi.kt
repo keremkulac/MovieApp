@@ -1,6 +1,5 @@
-package com.keremkulac.movieapp.service
+package com.keremkulac.movieapp.service.movie
 
-import com.keremkulac.movieapp.model.Genre
 import com.keremkulac.movieapp.model.Genres
 import io.reactivex.Single
 import retrofit2.http.GET
