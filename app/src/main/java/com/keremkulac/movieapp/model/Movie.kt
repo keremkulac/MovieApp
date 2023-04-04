@@ -11,6 +11,8 @@ data class MovieResult(
 data class Movie(
     @SerializedName("adult")
     val adult: Boolean,
+    @SerializedName("first_air_date")
+    val first_air_date: String?,
     @SerializedName("backdrop_path")
     val backdrop_path: String,
     @SerializedName("genre_ids")

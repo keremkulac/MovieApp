@@ -5,7 +5,7 @@
     <data>
         <variable
             name="tvseries"
-            type="com.keremkulac.movieapp.model.TvSeries" />
+            type="com.keremkulac.movieapp.Movie" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
 

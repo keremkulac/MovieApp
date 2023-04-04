@@ -1,6 +1,6 @@
 package com.keremkulac.movieapp.service.tv_series
 
-import com.keremkulac.movieapp.model.TvSeriesResult
+import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.util.BASE_URL
 import io.reactivex.Single
 import retrofit2.Retrofit
@@ -15,7 +15,7 @@ class PopularTvApiImp {
         .build()
         .create(PopularTvApi::class.java)
 
-    fun getTvPopular(key : String) : Single<TvSeriesResult> {
+    fun getTvPopular(key : String) : Single<MovieResult> {
         return api.getTvPopular(key)
     }
 }

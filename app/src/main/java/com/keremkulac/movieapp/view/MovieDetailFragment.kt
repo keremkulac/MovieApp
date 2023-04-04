@@ -12,7 +12,6 @@ import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.databinding.FragmentMovieDetailBinding
 import com.keremkulac.movieapp.model.Genre
-import com.keremkulac.movieapp.model.TvSeries
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import com.keremkulac.movieapp.viewmodel.MovieDetailViewModel
@@ -25,7 +24,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private var genres = ArrayList<Genre>()
     private var tvSeriesGenre = ArrayList<Genre>()
     private var movie : Movie? = null
-    private var tvSeries : TvSeries? = null
+    private var tvSeries : Movie? = null
     private  var latestMovie : LatestMovie? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieDetailBinding.inflate(inflater)
@@ -58,7 +57,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
             textView.text = builder.toString()
         }
     }
-    private fun deneme1(list : ArrayList<Int>,textView : TextView){
+    private fun observeTvSeriesGenres(list : ArrayList<Int>,textView : TextView){
         viewModel.tvSeriesGenres.observe(viewLifecycleOwner){tvSeriesGenres->
             val builder = StringBuilder()
             tvSeriesGenre = tvSeriesGenres
@@ -119,9 +118,9 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     }
 
     private fun getTvSeries(){
-        tvSeries = requireArguments().getSerializable("tvSeries") as TvSeries?
+        tvSeries = requireArguments().getSerializable("tvSeries") as Movie?
         if(tvSeries != null){
-            deneme1(tvSeries!!.genre_ids,binding.movieGenres)
+            observeTvSeriesGenres(tvSeries!!.genre_ids,binding.movieGenres)
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
             if(tvSeries!!.first_air_date == null){
                 binding.movieReleaseDate.text = "Unknown"
@@ -130,7 +129,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
             }
             binding.movieOverview.text = tvSeries!!.overview
             if(tvSeries!!.name == null){
-                binding.movieName.text = tvSeries!!.original_name
+              //  binding.movieName.text = tvSeries!!.original_name
             }else{
                 binding.movieName.text = tvSeries!!.name
 

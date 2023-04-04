@@ -21,8 +21,6 @@ class SearchActivity : AppCompatActivity() {
         replaceFragment(SearchFragment(),supportFragmentManager,R.id.searchFrameLayout)
     }
 
-
-
     private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager, layout :Int){
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(layout,fragment)

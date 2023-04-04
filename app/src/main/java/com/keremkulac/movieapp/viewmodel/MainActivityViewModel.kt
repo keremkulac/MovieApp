@@ -32,7 +32,7 @@ class MainActivityViewModel {
 
                     override fun onSuccess(t: LatestMovie) {
                         latestMovies.value = t
-                        Log.d("TASD",t.original_title)
+
                     }
 
                     override fun onError(e: Throwable) {

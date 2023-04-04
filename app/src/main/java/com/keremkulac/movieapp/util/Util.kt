@@ -11,7 +11,7 @@ fun ImageView.downloadFromUrl(url: String, progressDrawable: CircularProgressDra
     val options = RequestOptions()
         .placeholder(progressDrawable)
         .error(R.mipmap.ic_launcher_round)
-    var posterUrl =  "https://image.tmdb.org/t/p/w500/"+url
+    val posterUrl =  "https://image.tmdb.org/t/p/w500/"+url
     Glide.with(context)
         .setDefaultRequestOptions(options)
         .load(posterUrl)
@@ -25,4 +25,7 @@ fun placeHolderProgressBar(context : Context) : CircularProgressDrawable{
         centerRadius = 40f
         start()
     }
+
 }
+
+

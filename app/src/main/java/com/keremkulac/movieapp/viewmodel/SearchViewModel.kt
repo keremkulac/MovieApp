@@ -12,6 +12,7 @@ import com.keremkulac.movieapp.service.movie.TrendMovieApiImp
 import com.keremkulac.movieapp.service.movie.UpcomingMovieApiImp
 import com.keremkulac.movieapp.service.tv_series.PopularTvApiImp
 import com.keremkulac.movieapp.service.tv_series.TopRatedTvSeriesApiImp
+import com.keremkulac.movieapp.service.tv_series.TvSeriesGenreApiImp
 import com.keremkulac.movieapp.util.API_KEY
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -27,45 +28,57 @@ class SearchViewModel : ViewModel(){
     var popularMovies = MutableLiveData<ArrayList<Movie>>()
     var trendMovies = MutableLiveData<ArrayList<Movie>>()
     var upcomingMovies = MutableLiveData<ArrayList<Movie>>()
-    var genres = MutableLiveData<ArrayList<Genre>>()
+    var movieGenres = MutableLiveData<ArrayList<Genre>>()
+    var tvSeriesGenres = MutableLiveData<ArrayList<Genre>>()
     private val sameMovies = ArrayList<Movie>()
-    private val sameTvSeries = ArrayList<TvSeries>()
+    private val sameTvSeries = ArrayList<Movie>()
     private val popularMovieAPIImp = PopularMovieApiImp()
     private val trendMovieApiImp = TrendMovieApiImp()
     private val movieGenreApiImp = MovieGenreApiImp()
+    private val tvSeriesGenreApiImp = TvSeriesGenreApiImp()
     private val upcomingMovieApiImp = UpcomingMovieApiImp ()
-    val topRatedTvSeries = MutableLiveData<ArrayList<TvSeries>>()
-    val popularTvSeries = MutableLiveData<ArrayList<TvSeries>>()
+    val topRatedTvSeries = MutableLiveData<ArrayList<Movie>>()
+    val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
     private val popularTvApiImp = PopularTvApiImp()
     private val topRatedTvSeriesApiImp = TopRatedTvSeriesApiImp()
     private  var combinedMovieList : ArrayList<Movie>
-    private  var combinedTvSeriesList : ArrayList<TvSeries>
-    private  var actionMovieList = ArrayList<Movie>()
-    private  var adventureMovieList = ArrayList<Movie>()
-    private  var animationMovieList  = ArrayList<Movie>()
-    private  var comedyMovieList = ArrayList<Movie>()
-    private  var crimeMovieList = ArrayList<Movie>()
-    private  var documentaryMovieList = ArrayList<Movie>()
-    private  var dramaMovieList = ArrayList<Movie>()
-    private  var familyMovieList = ArrayList<Movie>()
-    private  var fantasyMovieList = ArrayList<Movie>()
-    private  var historyMovieList = ArrayList<Movie>()
-    private  var horrorMovieList = ArrayList<Movie>()
-    private  var musicMovieList = ArrayList<Movie>()
-    private  var mysteryMovieList = ArrayList<Movie>()
-    private  var romanceMovieList = ArrayList<Movie>()
-    private  var scienceFictionMovieList = ArrayList<Movie>()
+    private  var combinedTvSeriesList : ArrayList<Movie>
+    private  var actionList = ArrayList<Movie>()
+    private  var adventureList = ArrayList<Movie>()
+    private  var animationList  = ArrayList<Movie>()
+    private  var comedyList = ArrayList<Movie>()
+    private  var crimeList = ArrayList<Movie>()
+    private  var documentaryList = ArrayList<Movie>()
+    private  var dramaList = ArrayList<Movie>()
+    private  var familyList = ArrayList<Movie>()
+    private  var fantasyList = ArrayList<Movie>()
+    private  var historyList = ArrayList<Movie>()
+    private  var horrorList = ArrayList<Movie>()
+    private  var musicList = ArrayList<Movie>()
+    private  var mysteryList = ArrayList<Movie>()
+    private  var romanceList = ArrayList<Movie>()
+    private  var scienceFictionList = ArrayList<Movie>()
     private  var tvMovieList = ArrayList<Movie>()
-    private  var thrillerMovieList = ArrayList<Movie>()
-    private  var warMovieList = ArrayList<Movie>()
-    private  var westernMovieList = ArrayList<Movie>()
+    private  var thrillerList = ArrayList<Movie>()
+    private  var warList = ArrayList<Movie>()
+    private  var westernList = ArrayList<Movie>()
+    private  var kidsList = ArrayList<Movie>()
+    private var newsList = ArrayList<Movie>()
+    private var realityList = ArrayList<Movie>()
+    private var sciFiList = ArrayList<Movie>()
+    private var soapList = ArrayList<Movie>()
+    private var talkList = ArrayList<Movie>()
+    private var warAndPoliticsList = ArrayList<Movie>()
+    private var actionAndAdventureList = ArrayList<Movie>()
+    private var allGenres = ArrayList<Genre>()
     var allMovieListHm = HashMap<String,ArrayList<Movie>>()
     var genreWithSize = MutableLiveData<java.util.ArrayList<String>>()
     init {
 
         getPopularMovies()
         getTrendMovies()
-        getGenres()
+        getTvSeriesGenres()
+        getMovieGenres()
         getUpcomingMovies()
         getTopRatedTvSeries()
         getPopularTvSeries()
@@ -121,14 +134,30 @@ class SearchViewModel : ViewModel(){
         )
     }
 
-    private fun getGenres(){
+    private fun getMovieGenres(){
         disposable.add(
             movieGenreApiImp.getMovieGenre(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<Genres>(){
                     override fun onSuccess(t: Genres) {
-                        genres.value = t.genres
+                        movieGenres.value = t.genres
+                    }
+                    override fun onError(e: Throwable) {
+                        e.localizedMessage?.let { Log.d("TAG", it) }
+                    }
+                })
+        )
+    }
+
+    private fun getTvSeriesGenres(){
+        disposable.add(
+            tvSeriesGenreApiImp.getTvSeriesGenre(API_KEY)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<Genres>(){
+                    override fun onSuccess(t: Genres) {
+                        tvSeriesGenres.value = t.genres
                     }
                     override fun onError(e: Throwable) {
                         e.localizedMessage?.let { Log.d("TAG", it) }
@@ -142,9 +171,9 @@ class SearchViewModel : ViewModel(){
             popularTvApiImp.getTvPopular(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<TvSeriesResult>(){
-                    override fun onSuccess(t: TvSeriesResult) {
-                        popularTvSeries.value = t.tvSeries
+                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
+                    override fun onSuccess(t: MovieResult) {
+                        popularTvSeries.value = t.movies
                     }
                     override fun onError(e: Throwable) {
                         e.localizedMessage?.let { Log.d("TAG", it) }
@@ -158,9 +187,9 @@ class SearchViewModel : ViewModel(){
             topRatedTvSeriesApiImp.getTopRated(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<TvSeriesResult>(){
-                    override fun onSuccess(t: TvSeriesResult) {
-                        topRatedTvSeries.value = t.tvSeries
+                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
+                    override fun onSuccess(t: MovieResult) {
+                        topRatedTvSeries.value = t.movies
                     }
                     override fun onError(e: Throwable) {
                         e.localizedMessage?.let { Log.d("TAG", it) }
@@ -176,7 +205,10 @@ class SearchViewModel : ViewModel(){
         findSameMovies(upcomingMovies.value!!,popularMovies.value!!)
         findSameTvSeries(topRatedTvSeries.value!!,popularTvSeries.value!!)
         deleteSameMovies()
+        deleteSameTvSeries()
         movieGenreCount(combinedMovieList)
+        tvSeriesGenreCount()
+        getGenreNames()
     }
 
 
@@ -185,60 +217,114 @@ class SearchViewModel : ViewModel(){
             if(movie.genre_ids != null) {
                 for (movieID in movie.genre_ids){
                     when(movieID){
-                        28-> actionMovieList.add(movie)
-                        12-> adventureMovieList.add(movie)
-                        16-> animationMovieList.add(movie)
-                        35-> comedyMovieList.add(movie)
-                        80-> crimeMovieList.add(movie)
-                        99-> documentaryMovieList.add(movie)
-                        18-> dramaMovieList.add(movie)
-                        10751-> familyMovieList.add(movie)
-                        14-> fantasyMovieList.add(movie)
-                        36-> historyMovieList.add(movie)
-                        27-> horrorMovieList.add(movie)
-                        10402-> musicMovieList.add(movie)
-                        9648-> mysteryMovieList.add(movie)
-                        10749-> romanceMovieList.add(movie)
-                        878-> scienceFictionMovieList.add(movie)
+                        28-> actionList.add(movie)
+                        12-> adventureList.add(movie)
+                        16-> animationList.add(movie)
+                        35-> comedyList.add(movie)
+                        80-> crimeList.add(movie)
+                        99-> documentaryList.add(movie)
+                        18-> dramaList.add(movie)
+                        10751-> familyList.add(movie)
+                        14-> fantasyList.add(movie)
+                        36-> historyList.add(movie)
+                        27-> horrorList.add(movie)
+                        10402-> musicList.add(movie)
+                        9648-> mysteryList.add(movie)
+                        10749-> romanceList.add(movie)
+                        878-> scienceFictionList.add(movie)
                         10770-> tvMovieList.add(movie)
-                        53-> thrillerMovieList.add(movie)
-                        10752-> warMovieList.add(movie)
-                        37-> westernMovieList.add(movie)
+                        53-> thrillerList.add(movie)
+                        10752-> warList.add(movie)
+                        37-> westernList.add(movie)
                     }
                 }
             }
         }
-       allMovieListHm["All"] = allMovieList
-       allMovieListHm["Action"] = actionMovieList
-       allMovieListHm["Adventure"] = adventureMovieList
-       allMovieListHm["Comedy"] = comedyMovieList
-       allMovieListHm["Animation"] = animationMovieList
-       allMovieListHm["Comedy"] = comedyMovieList
-       allMovieListHm["Crime"] = crimeMovieList
-       allMovieListHm["Documentary"] = documentaryMovieList
-       allMovieListHm["Drama"] = dramaMovieList
-       allMovieListHm["Family"] = familyMovieList
-       allMovieListHm["Fantasy"] = fantasyMovieList
-       allMovieListHm["History"] = historyMovieList
-       allMovieListHm["Horror"] = horrorMovieList
-       allMovieListHm["Music"] = musicMovieList
-       allMovieListHm["Mystery"] = mysteryMovieList
-       allMovieListHm["Romance"] = romanceMovieList
-       allMovieListHm["Science Fiction"] = scienceFictionMovieList
+
+       for (tvSeries in combinedTvSeriesList){
+           if(tvSeries.genre_ids != null) {
+               for (tvSeriesID in tvSeries.genre_ids){
+                   when(tvSeriesID){
+                       10759-> actionAndAdventureList.add(tvSeries)
+                       16-> animationList.add(tvSeries)
+                       35-> comedyList.add(tvSeries)
+                       80-> crimeList.add(tvSeries)
+                       99-> documentaryList.add(tvSeries)
+                       18-> dramaList.add(tvSeries)
+                       10751-> familyList.add(tvSeries)
+                       10762-> kidsList.add(tvSeries)
+                       9648-> mysteryList.add(tvSeries)
+                       10763-> newsList.add(tvSeries)
+                       10764-> realityList.add(tvSeries)
+                       10765-> sciFiList.add(tvSeries)
+                       10766-> soapList.add(tvSeries)
+                       10767-> talkList.add(tvSeries)
+                       10768-> warAndPoliticsList.add(tvSeries)
+                       37-> westernList.add(tvSeries)
+                   }
+               }
+           }
+       }
+        val allList = allMovieList+ combinedTvSeriesList
+       allMovieListHm["All"] = allList as ArrayList<Movie>
+       allMovieListHm["Action"] = actionList
+       allMovieListHm["Action & Adventure"] = actionAndAdventureList
+       allMovieListHm["Adventure"] = adventureList
+       allMovieListHm["Comedy"] = comedyList
+       allMovieListHm["Animation"] = animationList
+       allMovieListHm["Comedy"] = comedyList
+       allMovieListHm["Crime"] = crimeList
+       allMovieListHm["Documentary"] = documentaryList
+       allMovieListHm["Drama"] = dramaList
+       allMovieListHm["Family"] = familyList
+       allMovieListHm["Fantasy"] = fantasyList
+       allMovieListHm["History"] = historyList
+       allMovieListHm["Horror"] = horrorList
+       allMovieListHm["Kids"] = kidsList
+       allMovieListHm["Music"] = musicList
+       allMovieListHm["Mystery"] = mysteryList
+       allMovieListHm["News"] = newsList
+       allMovieListHm["Reality"] = realityList
+       allMovieListHm["Romance"] = romanceList
+       allMovieListHm["Sci-Fi & Fantasy"] = sciFiList
+       allMovieListHm["Science Fiction"] = scienceFictionList
+       allMovieListHm["Soap"] = soapList
+       allMovieListHm["Talk"] = talkList
        allMovieListHm["TV Movie"] = tvMovieList
-       allMovieListHm["Thriller"] = thrillerMovieList
-       allMovieListHm["War"] = warMovieList
-       allMovieListHm["Western"] = westernMovieList
+       allMovieListHm["Thriller"] = thrillerList
+       allMovieListHm["War"] = warList
+       allMovieListHm["War & Politics"] = warAndPoliticsList
+       allMovieListHm["Western"] = westernList
 
    }
 
+    private fun tvSeriesGenreCount(){
+        val deletedList = mutableListOf<Genre>()
+        val list = ArrayList<Genre>()
+        deletedList.addAll(tvSeriesGenres.value!!)
+        for(tvSeriesGenres in tvSeriesGenres.value!!){
+            for(movieGenres in movieGenres.value!!){
+                if(tvSeriesGenres.id == movieGenres.id){
+                    deletedList.remove(tvSeriesGenres)
+                    list.add(tvSeriesGenres)
+                }
+            }
+        }
+    }
     fun filter(text: String?,adapter : SearchAdapter){
+        val allList = combinedMovieList + combinedTvSeriesList
         val filteredList: ArrayList<Movie> = ArrayList()
         if(text != null) {
-            for (listItem in combinedMovieList) {
+            for (listItem in allList) {
                 if (listItem.original_title != null) {
                     if (listItem.original_title.lowercase(Locale.ROOT).contains(text.lowercase(Locale.ROOT))) {
                         filteredList.add(listItem)
+                    }
+                }else{
+                    if(listItem.name != null) {
+                        if (listItem.name.lowercase(Locale.ROOT).contains(text.lowercase(Locale.ROOT))) {
+                            filteredList.add(listItem)
+                        }
                     }
                 }
             }
@@ -257,10 +343,7 @@ class SearchViewModel : ViewModel(){
         val genreNames = ArrayList<String>()
         val sizeList = ArrayList<String>()
         var size : String
-        genreNames.add("All")
-        size = allMovieListHm["All"]!!.size.toString()
-        sizeList.add("All"+"(${size})")
-        for(genre in genres.value!!){
+        for(genre in allGenres){
             genreNames.add(genre.name)
             if(allMovieListHm[genre.name] != null){
                 size = allMovieListHm[genre.name]!!.size.toString()
@@ -268,7 +351,15 @@ class SearchViewModel : ViewModel(){
             }
         }
 
-        genreWithSize.value = sizeList
+
+        sizeList.sortBy {
+            it
+        }
+        val list = ArrayList<String>()
+        size = allMovieListHm["All"]!!.size.toString()
+        list.add("All"+"(${size})")
+        val list1 = list+sizeList
+        genreWithSize.value = list1 as ArrayList<String>
         return genreNames
     }
 
@@ -282,6 +373,27 @@ class SearchViewModel : ViewModel(){
         }
     }
 
+    private fun getGenreNames(){
+        val sameGenres = mutableListOf<Genre>()
+        val deletedList = mutableListOf<Genre>()
+        deletedList.addAll(movieGenres.value!!)
+        for (i in movieGenres.value!!){
+            for(x in tvSeriesGenres.value!!){
+                if(i.id == x.id){
+                    sameGenres.add(i)
+                }
+            }
+        }
+        for (genre in movieGenres.value!!){
+            for (sameGenre in sameGenres.indices){
+                if(genre.id == sameGenres[sameGenre].id){
+                    deletedList.remove(genre)
+                }
+            }
+        }
+        allGenres.addAll(deletedList)
+        allGenres.addAll(tvSeriesGenres.value!!)
+    }
     private fun findSameMovies(list1: ArrayList<Movie>,list2: ArrayList<Movie>){
         for (list1Item in list1) {
             for (list2Item in list2) {
@@ -319,7 +431,7 @@ class SearchViewModel : ViewModel(){
     }
 
     private fun deleteSameTvSeries(){
-        val deletedList = mutableListOf<TvSeries>()
+        val deletedList = mutableListOf<Movie>()
         deletedList.addAll(popularTvSeries.value!!)
         for (tvSeries in popularTvSeries.value!!){
             for (same in sameTvSeries.indices){
@@ -332,7 +444,7 @@ class SearchViewModel : ViewModel(){
         combinedTvSeriesList.addAll(topRatedTvSeries.value!!)
     }
 
-    private fun findSameTvSeries(list1: ArrayList<TvSeries>,list2: ArrayList<TvSeries>){
+    private fun findSameTvSeries(list1: ArrayList<Movie>,list2: ArrayList<Movie>){
         for (list1Item in list1) {
             for (list2Item in list2) {
                 if (list2Item.id != null && list1Item.id != null) {

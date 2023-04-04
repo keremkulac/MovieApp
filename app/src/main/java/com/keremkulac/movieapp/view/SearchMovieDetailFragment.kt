@@ -52,6 +52,12 @@ class SearchMovieDetailFragment : Fragment(){
         binding.movieDetailOverview.text = arg.overview
         if(arg.release_date == null){
             binding.movieDetailReleaseDate.text = "Unknown"
+            binding.movieDetailReleaseDate.text = arg.first_air_date?.let { it1 ->
+                viewModel.splitDate(
+                    it1
+                )
+            }
+
         }else{
             binding.movieDetailReleaseDate.text = viewModel.splitDate(arg.release_date)
         }

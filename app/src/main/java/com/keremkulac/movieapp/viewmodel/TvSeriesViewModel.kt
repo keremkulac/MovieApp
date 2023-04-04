@@ -2,8 +2,8 @@ package com.keremkulac.movieapp.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.keremkulac.movieapp.model.TvSeries
-import com.keremkulac.movieapp.model.TvSeriesResult
+import com.keremkulac.movieapp.Movie
+import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.service.tv_series.PopularTvApiImp
 import com.keremkulac.movieapp.service.tv_series.TopRatedTvSeriesApiImp
 import com.keremkulac.movieapp.util.API_KEY
@@ -14,8 +14,8 @@ import io.reactivex.schedulers.Schedulers
 
 class TvSeriesViewModel {
     private val disposable = CompositeDisposable()
-    val topRatedTvSeries = MutableLiveData<ArrayList<TvSeries>>()
-    val popularTvSeries = MutableLiveData<ArrayList<TvSeries>>()
+    val topRatedTvSeries = MutableLiveData<ArrayList<Movie>>()
+    val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
     private val popularTvApiImp = PopularTvApiImp()
     private val topRatedTvSeriesApiImp = TopRatedTvSeriesApiImp()
 
@@ -28,9 +28,9 @@ class TvSeriesViewModel {
             popularTvApiImp.getTvPopular(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<TvSeriesResult>(){
-                    override fun onSuccess(t: TvSeriesResult) {
-                        popularTvSeries.value = t.tvSeries
+                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
+                    override fun onSuccess(t: MovieResult) {
+                        popularTvSeries.value = t.movies
                     }
                     override fun onError(e: Throwable) {
                         e.localizedMessage?.let { Log.d("TAG", it) }
@@ -44,9 +44,9 @@ class TvSeriesViewModel {
             topRatedTvSeriesApiImp.getTopRated(API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<TvSeriesResult>(){
-                    override fun onSuccess(t: TvSeriesResult) {
-                        topRatedTvSeries.value = t.tvSeries
+                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
+                    override fun onSuccess(t: MovieResult) {
+                        topRatedTvSeries.value = t.movies
                     }
                     override fun onError(e: Throwable) {
                         e.localizedMessage?.let { Log.d("TAG", it) }

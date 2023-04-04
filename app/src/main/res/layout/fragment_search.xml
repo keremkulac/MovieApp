@@ -14,7 +14,7 @@
     <androidx.appcompat.widget.SearchView
         android:layoutDirection="rtl"
         android:theme="@style/searchViewStyle"
-        app:queryHint="Enter movie name"
+        app:queryHint="Enter movie or TV series name"
         android:id="@+id/searchView"
         android:background="@drawable/searhview_border"
         android:layout_margin="10dp"

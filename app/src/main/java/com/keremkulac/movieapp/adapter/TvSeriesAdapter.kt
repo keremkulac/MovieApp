@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.ItemTvSeriesBinding
 import com.keremkulac.movieapp.model.TvSeries
@@ -15,10 +16,10 @@ import com.keremkulac.movieapp.view.MovieDetailFragment
 
 class TvSeriesAdapter(
     var activity : FragmentActivity,
-    var tvSeriesList : ArrayList<TvSeries>): RecyclerView.Adapter<TvSeriesAdapter.TvSeriesViewHolder>(){
+    var tvSeriesList : ArrayList<Movie>): RecyclerView.Adapter<TvSeriesAdapter.TvSeriesViewHolder>(){
 
     class TvSeriesViewHolder (val binding : ItemTvSeriesBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(tvSeries: TvSeries){
+        fun bind(tvSeries: Movie){
             binding.tvseries =tvSeries
         }
     }
@@ -53,7 +54,7 @@ class TvSeriesAdapter(
         }
     }
     fun filterList(filterList: ArrayList<TvSeries>) {
-        tvSeriesList.addAll(filterList)
-        notifyDataSetChanged()
+      //  tvSeriesList.addAll(filterList)
+       // notifyDataSetChanged()
     }
 }

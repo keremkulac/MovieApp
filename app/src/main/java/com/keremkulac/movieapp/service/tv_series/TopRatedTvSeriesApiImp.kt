@@ -1,6 +1,6 @@
 package com.keremkulac.movieapp.service.tv_series
 
-import com.keremkulac.movieapp.model.TvSeriesResult
+import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.util.BASE_URL
 import io.reactivex.Single
 import retrofit2.Retrofit
@@ -15,7 +15,7 @@ class TopRatedTvSeriesApiImp {
         .build()
         .create(TopRatedTvSeriesApi::class.java)
 
-    fun getTopRated(key : String) : Single<TvSeriesResult> {
+    fun getTopRated(key : String) : Single<MovieResult> {
         return api.getTopRated(key)
     }
 }
