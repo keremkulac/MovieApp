@@ -10,7 +10,7 @@
     <string name="popular_movies">Popular Movies</string>
     <string name="tag">TAG</string>
     <string name="_10">10</string>
-    <string name="movieNotFoundMessage">Film bulunamadı</string>
+    <string name="movieNotFoundMessage">No match found</string>
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="movie_detail">Movie Detail</string>
@@ -21,4 +21,12 @@
     <string name="popular_tv_series">Popular TV Series</string>
     <string name="latest_tv_series">Latest TV Series</string>
     <string name="top_rated_tv_series">Top Rated TV Series</string>
+    <string name="unknown">Unknown</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="logout">Logout</string>
+
+
 </resources>

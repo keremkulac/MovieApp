@@ -214,7 +214,7 @@ class SearchViewModel : ViewModel(){
 
    private fun movieGenreCount(allMovieList : ArrayList<Movie>){
         for (movie in allMovieList){
-            if(movie.genre_ids != null) {
+            movie.genre_ids.let {
                 for (movieID in movie.genre_ids){
                     when(movieID){
                         28-> actionList.add(movie)
@@ -242,7 +242,7 @@ class SearchViewModel : ViewModel(){
         }
 
        for (tvSeries in combinedTvSeriesList){
-           if(tvSeries.genre_ids != null) {
+           tvSeries.genre_ids.let {
                for (tvSeriesID in tvSeries.genre_ids){
                    when(tvSeriesID){
                        10759-> actionAndAdventureList.add(tvSeries)
@@ -397,9 +397,11 @@ class SearchViewModel : ViewModel(){
     private fun findSameMovies(list1: ArrayList<Movie>,list2: ArrayList<Movie>){
         for (list1Item in list1) {
             for (list2Item in list2) {
-                if (list2Item.id != null && list1Item.id != null) {
-                    if (list2Item.id == list1Item.id) {
-                        sameMovies.add(list2Item)
+                list2Item.id.let {
+                    list1Item.id.let {
+                        if (list2Item.id == list1Item.id) {
+                            sameMovies.add(list2Item)
+                        }
                     }
                 }
             }
@@ -447,9 +449,11 @@ class SearchViewModel : ViewModel(){
     private fun findSameTvSeries(list1: ArrayList<Movie>,list2: ArrayList<Movie>){
         for (list1Item in list1) {
             for (list2Item in list2) {
-                if (list2Item.id != null && list1Item.id != null) {
-                    if (list2Item.id == list1Item.id) {
-                        sameTvSeries.add(list2Item)
+                list2Item.id.let {
+                    list1Item.id.let {
+                        if (list2Item.id == list1Item.id) {
+                            sameTvSeries.add(list2Item)
+                        }
                     }
                 }
             }

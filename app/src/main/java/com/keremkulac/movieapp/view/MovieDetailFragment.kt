@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.Movie
+import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentMovieDetailBinding
 import com.keremkulac.movieapp.model.Genre
 import com.keremkulac.movieapp.util.downloadFromUrl
@@ -25,7 +26,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private var tvSeriesGenre = ArrayList<Genre>()
     private var movie : Movie? = null
     private var tvSeries : Movie? = null
-    private  var latestMovie : LatestMovie? = null
+    private  var popular : Movie? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieDetailBinding.inflate(inflater)
         viewModel = MovieDetailViewModel()
@@ -36,7 +37,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
        // val  arg =  requireArguments().getSerializable("movie") as Movie
       getMovie()
-        getLatestMovie()
+        getPopular()
         getTvSeries()
     }
 
@@ -79,7 +80,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
             Log.d("TAG", movie!!.genre_ids.toString())
             if(movie!!.release_date == null){
-                binding.movieReleaseDate.text = "Unknown"
+                binding.movieReleaseDate.text = getString(R.string.unknown)
             }else{
                 binding.movieReleaseDate.text = movie!!.release_date?.let { viewModel.splitDate(it) }
             }
@@ -95,25 +96,25 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
             binding.movieRate.text = viewModel.vote(movie!!.vote_average.toString())
         }
     }
-    private fun getLatestMovie(){
-        latestMovie = requireArguments().getSerializable("latestMovie") as LatestMovie?
-        if(latestMovie != null){
+    private fun getPopular(){
+        popular = requireArguments().getSerializable("popular") as Movie?
+        if(popular != null){
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
-            if(latestMovie!!.release_date == null){
-                binding.movieReleaseDate.text = "Unknown"
+            if(popular!!.release_date == null){
+                binding.movieReleaseDate.text = getString(R.string.unknown)
             }else{
-                binding.movieReleaseDate.text = latestMovie!!.release_date?.let { viewModel.splitDate(it) }
+                binding.movieReleaseDate.text = popular!!.release_date?.let { viewModel.splitDate(it) }
             }
-            binding.movieOverview.text = latestMovie!!.overview
-            if(latestMovie!!.title == null){
-                binding.movieName.text = latestMovie!!.original_title
+            binding.movieOverview.text = popular!!.overview
+            if(popular!!.title == null){
+                binding.movieName.text = popular!!.original_title
             }else{
-                binding.movieName.text = latestMovie!!.title
+                binding.movieName.text = popular!!.title
 
             }
 
-            binding.movieImage.downloadFromUrl(latestMovie!!.poster_path, placeHolderProgressBar(requireContext()))
-            binding.movieRate.text = viewModel.vote(latestMovie!!.vote_average.toString())
+            binding.movieImage.downloadFromUrl(popular!!.poster_path, placeHolderProgressBar(requireContext()))
+            binding.movieRate.text = viewModel.vote(popular!!.vote_average.toString())
         }
     }
 
@@ -123,7 +124,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
             observeTvSeriesGenres(tvSeries!!.genre_ids,binding.movieGenres)
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
             if(tvSeries!!.first_air_date == null){
-                binding.movieReleaseDate.text = "Unknown"
+                binding.movieReleaseDate.text = getString(R.string.unknown)
             }else{
                 binding.movieReleaseDate.text = tvSeries!!.first_air_date?.let { viewModel.splitDate(it) }
             }

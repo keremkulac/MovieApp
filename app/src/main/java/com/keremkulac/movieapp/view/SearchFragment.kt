@@ -23,7 +23,7 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentSearchBinding.inflate(inflater)
-       (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
+     //  (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         viewModel = SearchViewModel()
         return binding.root
     }

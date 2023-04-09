@@ -3,33 +3,44 @@ package com.keremkulac.movieapp.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.keremkulac.movieapp.LatestMovie
+import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
+import com.keremkulac.movieapp.util.replaceFragment
 import com.keremkulac.movieapp.viewmodel.MainActivityViewModel
 import com.keremkulac.movieapp.viewmodel.MovieViewModel
+import java.util.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var popularMovieViewModel: MovieViewModel
     private lateinit var bottomNav : BottomNavigationView
     private lateinit var viewModel : MainActivityViewModel
     private lateinit var posterImageView: ImageView
-    private lateinit var latestMovie : LatestMovie
+    private var popularMovie : Movie? = null
+    private  var popularTvSeries : Movie? = null
     private lateinit var selectedTV : View
     private lateinit var selectedMovie : View
+    private var randomNumber : Int = 0
+    private lateinit var auth : FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        (this as AppCompatActivity?)!!.supportActionBar!!.hide()
+
+      //  (this as AppCompatActivity?)!!.supportActionBar!!.hide()
         viewModel = MainActivityViewModel()
         popularMovieViewModel = MovieViewModel()
         posterImageView = findViewById(R.id.latestMoviePoster)
@@ -38,8 +49,9 @@ class MainActivity : AppCompatActivity() {
         bottomNav.menu.findItem(R.id.search).isChecked = false
         selectedTV = findViewById(R.id.selectedTV)
         selectedMovie = findViewById(R.id.selectedMovie)
-        setLatestPoster()
-        latestPosterClick()
+        auth = Firebase.auth
+        setPopularPoster()
+        popularPosterClick()
         bottomNavMenuSelect()
         selectMovie()
         selectTVSeries()
@@ -48,12 +60,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager,layout :Int){
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(layout,fragment)
-            fragmentTransaction.commit()
-
-        }
 
     private fun bottomNavMenuSelect(){
         bottomNav.setOnItemSelectedListener {menuItem->
@@ -68,58 +74,63 @@ class MainActivity : AppCompatActivity() {
                     startActivity(mainActivityIntent)
                     true
                 }
+                R.id.logout-> {
+                    auth.signOut()
+                    val loginActivity = Intent(this, LoginActivity::class.java)
+                    startActivity(loginActivity)
+                  // finish()
+                    true
+                }
                 else -> {false   }
             }
         }
     }
-    private fun setLatestPoster(){
-        val tv = findViewById<TextView>(R.id.latestText)
-        val gradientView = findViewById<View>(R.id.gradient)
-        viewModel.latestMovies.observe(this){
-
-            if(it.backdrop_path !=null && !it.adult){
-                latestMovie = it
-                posterImageView.downloadFromUrl(it.backdrop_path, placeHolderProgressBar(this))
-                posterImageView.visibility = View.VISIBLE
-            }else{
-                posterImageView.visibility = View.GONE
-                tv.visibility = View.GONE
-                gradientView.visibility = View.GONE
-
+    private fun setPopularPoster(){
+        if(selectedMovie.visibility == View.VISIBLE) {
+            viewModel.popularMovies.observe(this) {
+                randomNumber = kotlin.random.Random.nextInt(0, it.size)
+                val popularMovie = it[randomNumber]
+                this.popularMovie = popularMovie
+                if (popularMovie.backdrop_path != null && !popularMovie.adult) {
+                    posterImageView.downloadFromUrl(
+                        popularMovie.backdrop_path,
+                        placeHolderProgressBar(this)
+                    )
+                    posterImageView.visibility = View.VISIBLE
+                }
             }
-            if(it.poster_path != null && !it.adult){
-                latestMovie = it
-                posterImageView.visibility = View.VISIBLE
-                posterImageView.downloadFromUrl(it.poster_path, placeHolderProgressBar(this))
-            }else{
-                posterImageView.visibility = View.GONE
-                tv.visibility = View.GONE
-                gradientView.visibility = View.GONE
+        }
+        if(selectedTV.visibility == View.VISIBLE) {
+            viewModel.popularTvSeries.observe(this) {
+                randomNumber = kotlin.random.Random.nextInt(0, it.size)
+                val popularTvSeries = it[randomNumber]
+                this.popularTvSeries = popularTvSeries
+                if (popularTvSeries.poster_path != null && !popularTvSeries.adult) {
+                    posterImageView.visibility = View.VISIBLE
+                    posterImageView.downloadFromUrl(
+                        popularTvSeries.poster_path,
+                        placeHolderProgressBar(this)
+                    )
+                }
             }
         }
     }
-    private fun latestPosterClick(){
-        if(selectedMovie.visibility == View.VISIBLE) {
+    private fun popularPosterClick(){
             posterImageView.setOnClickListener {
                 val fragmentTransaction = this.supportFragmentManager.beginTransaction()
                 val args = Bundle()
                 val movieDetailFragment = MovieDetailFragment()
-                args.putSerializable("latestMovie", latestMovie)
+                if(selectedMovie.visibility == View.VISIBLE) {
+                    args.putSerializable("movie", popularMovie)
+                }
+                if(selectedTV.visibility == View.VISIBLE) {
+                    args.putSerializable("tvSeries", popularTvSeries)
+                }
                 movieDetailFragment.arguments = args
                 movieDetailFragment.show(this.supportFragmentManager, "TAG")
                 fragmentTransaction.commit()
             }
-        }else{
-            posterImageView.setOnClickListener {
-                val fragmentTransaction = this.supportFragmentManager.beginTransaction()
-                val args = Bundle()
-                val movieDetailFragment = MovieDetailFragment()
-                args.putSerializable("latestTvSeries", latestMovie)
-                movieDetailFragment.arguments = args
-                movieDetailFragment.show(this.supportFragmentManager, "TAG")
-                fragmentTransaction.commit()
-            }
-        }
+
     }
 
     private fun selectTVSeries(){
@@ -128,15 +139,17 @@ class MainActivity : AppCompatActivity() {
             selectedMovie.visibility = View.INVISIBLE
             selectedTV.visibility = View.VISIBLE
              replaceFragment(TvSeriesFragment(),this.supportFragmentManager,R.id.mainFrameLayout)
+            setPopularPoster()
 
         }
     }
     private fun selectMovie(){
         val tv = findViewById<TextView>(R.id.selectMovie)
         tv.setOnClickListener {
-            selectedTV.visibility = View.INVISIBLE
             selectedMovie.visibility = View.VISIBLE
+            selectedTV.visibility = View.INVISIBLE
             replaceFragment(MovieFragment(),this.supportFragmentManager,R.id.mainFrameLayout)
+            setPopularPoster()
         }
     }
 }

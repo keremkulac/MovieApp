@@ -19,7 +19,7 @@ class SearchMovieDetailFragment : Fragment(){
 
     private lateinit var binding : FragmentSearchMovieDetailBinding
     private lateinit var viewModel : SearchMovieDetailViewModel
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchMovieDetailBinding.inflate(inflater)
         viewModel = SearchMovieDetailViewModel()
         return binding.root
@@ -51,7 +51,7 @@ class SearchMovieDetailFragment : Fragment(){
         binding.movieDetailBackdrop.downloadFromUrl(arg.backdrop_path, placeHolderProgressBar(requireContext()))
         binding.movieDetailOverview.text = arg.overview
         if(arg.release_date == null){
-            binding.movieDetailReleaseDate.text = "Unknown"
+            binding.movieDetailReleaseDate.text = getString(R.string.unknown)
             binding.movieDetailReleaseDate.text = arg.first_air_date?.let { it1 ->
                 viewModel.splitDate(
                     it1
