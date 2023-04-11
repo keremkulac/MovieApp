@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="TV Series"
+                android:text="@string/tv_series"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="20dp"
-                android:text="Movie"
+                android:text="@string/movie"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -60,14 +60,34 @@
                 android:id="@+id/selectedMovie"
                 android:layout_width="44dp"
                 android:layout_height="2dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:background="@color/white"
                 android:layout_below="@+id/selectMovie"
                 android:layout_toEndOf="@id/selectTVSeries"/>
 
+            <TextView
+                android:id="@+id/account"
+                android:text=" K "
+                android:background="#0050F1"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true" />
 
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
+
+    <FrameLayout
+        android:id="@+id/accountFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/scrollView"

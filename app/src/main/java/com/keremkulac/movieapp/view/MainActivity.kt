@@ -3,17 +3,14 @@ package com.keremkulac.movieapp.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.util.downloadFromUrl
@@ -21,7 +18,6 @@ import com.keremkulac.movieapp.util.placeHolderProgressBar
 import com.keremkulac.movieapp.util.replaceFragment
 import com.keremkulac.movieapp.viewmodel.MainActivityViewModel
 import com.keremkulac.movieapp.viewmodel.MovieViewModel
-import java.util.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var popularMovieViewModel: MovieViewModel
@@ -55,11 +51,10 @@ class MainActivity : AppCompatActivity() {
         bottomNavMenuSelect()
         selectMovie()
         selectTVSeries()
+        account()
+
         replaceFragment(TvSeriesFragment(),this.supportFragmentManager,R.id.mainFrameLayout)
     }
-
-
-
 
     private fun bottomNavMenuSelect(){
         bottomNav.setOnItemSelectedListener {menuItem->
@@ -152,6 +147,28 @@ class MainActivity : AppCompatActivity() {
             setPopularPoster()
         }
     }
+
+    private fun account(){
+        val accountTextView = findViewById<TextView>(R.id.account)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+        val imageView = findViewById<ImageView>(R.id.latestMoviePoster)
+        val view = findViewById<View>(R.id.gradient)
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolBar)
+        val frameLayout = findViewById<FrameLayout>(R.id.mainFrameLayout)
+        val accountFrameLayout = findViewById<FrameLayout>(R.id.accountFrameLayout)
+
+        accountTextView.setOnClickListener {
+            accountFrameLayout.visibility = View.VISIBLE
+            bottomNav.visibility = View.GONE
+            imageView.visibility = View.GONE
+            view.visibility = View.GONE
+            toolbar.visibility = View.GONE
+            frameLayout.visibility = View.GONE
+            replaceFragment(AccountFragment(),this.supportFragmentManager,R.id.accountFrameLayout)
+        }
+    }
+
+
 }
 
 
