@@ -2,13 +2,11 @@ package com.keremkulac.movieapp.view
 
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentMovieDetailBinding
@@ -39,6 +37,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
       getMovie()
         getPopular()
         getTvSeries()
+        addMovie()
     }
 
 
@@ -76,9 +75,9 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private fun getMovie(){
         movie = requireArguments().getSerializable("movie") as Movie?
         if(movie != null){
+            changeIcon(movie!!.id.toString())
             observeLiveData(movie!!.genre_ids,binding.movieGenres)
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
-            Log.d("TAG", movie!!.genre_ids.toString())
             if(movie!!.release_date == null){
                 binding.movieReleaseDate.text = getString(R.string.unknown)
             }else{
@@ -99,6 +98,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private fun getPopular(){
         popular = requireArguments().getSerializable("popular") as Movie?
         if(popular != null){
+            changeIcon(popular!!.id.toString())
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
             if(popular!!.release_date == null){
                 binding.movieReleaseDate.text = getString(R.string.unknown)
@@ -121,6 +121,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private fun getTvSeries(){
         tvSeries = requireArguments().getSerializable("tvSeries") as Movie?
         if(tvSeries != null){
+            changeIcon(tvSeries!!.id.toString())
             observeTvSeriesGenres(tvSeries!!.genre_ids,binding.movieGenres)
             binding.movieOverview.movementMethod= ScrollingMovementMethod()
             if(tvSeries!!.first_air_date == null){
@@ -138,6 +139,45 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
 
             binding.movieImage.downloadFromUrl(tvSeries!!.poster_path, placeHolderProgressBar(requireContext()))
             binding.movieRate.text = viewModel.vote(tvSeries!!.vote_average.toString())
+        }
+    }
+
+    private fun addMovie(){
+        binding.addMovie.setOnClickListener {
+
+
+            if(tvSeries != null){
+                if(binding.isChecked.text.equals("false")){
+                    viewModel.add(tvSeries,requireContext())
+                    binding.addMovie.setImageResource(R.drawable.ic_check)
+                    binding.isChecked.text = getString(R.string.trueText)
+                }else if(binding.isChecked.text.equals("true")){
+                    viewModel.checkAndRemoveList(tvSeries!!.id.toInt(),requireContext(),binding.addMovie)
+                    binding.isChecked.text = getString(R.string.falseText)
+                }
+            }
+
+            if(movie != null){
+                if(binding.isChecked.text == "false"){
+                    viewModel.add(movie,requireContext())
+                    binding.addMovie.setImageResource(R.drawable.ic_check)
+                    binding.isChecked.text = getString(R.string.trueText)
+                }else if(binding.isChecked.text == "true"){
+                    viewModel.checkAndRemoveList(tvSeries!!.id.toInt(),requireContext(),binding.addMovie)
+                    binding.isChecked.text = getString(R.string.falseText)
+                }
+            }
+        }
+    }
+
+    private fun changeIcon(id : String){
+        viewModel.idList.observe(viewLifecycleOwner){
+            for(i in it){
+                if(i == id){
+                    binding.addMovie.setImageResource(R.drawable.ic_check)
+                    binding.isChecked.text = getString(R.string.trueText)
+                }
+            }
         }
     }
 

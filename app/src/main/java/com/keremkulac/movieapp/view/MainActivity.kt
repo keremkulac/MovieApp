@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -156,9 +157,10 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolBar)
         val frameLayout = findViewById<FrameLayout>(R.id.mainFrameLayout)
         val accountFrameLayout = findViewById<FrameLayout>(R.id.accountFrameLayout)
-
+        val scrollView = findViewById<ScrollView>(R.id.scrollView)
         accountTextView.setOnClickListener {
             accountFrameLayout.visibility = View.VISIBLE
+            scrollView.visibility = View.GONE
             bottomNav.visibility = View.GONE
             imageView.visibility = View.GONE
             view.visibility = View.GONE
@@ -167,6 +169,7 @@ class MainActivity : AppCompatActivity() {
             replaceFragment(AccountFragment(),this.supportFragmentManager,R.id.accountFrameLayout)
         }
     }
+
 
 
 }

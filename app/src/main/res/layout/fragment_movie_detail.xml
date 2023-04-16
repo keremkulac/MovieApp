@@ -18,6 +18,17 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/tag" />
 
+    <ImageView
+        android:contentDescription="@string/todo"
+        android:id="@+id/addMovie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_add"
+        app:layout_constraintStart_toEndOf="@+id/movieImage"
+        app:layout_constraintTop_toBottomOf="@+id/movieGenres" />
+
     <TextView
         android:id="@+id/movieGenres"
         android:layout_width="200dp"
@@ -37,12 +48,12 @@
         android:id="@+id/movieReleaseDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
+        android:layout_marginStart="10dp"
         android:text="@string/date"
-        android:textStyle="bold"
         android:textColor="#BFFFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/movieImage"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/addMovie"
         app:layout_constraintTop_toBottomOf="@+id/movieGenres" />
 
     <TextView
@@ -104,4 +115,13 @@
         app:layout_constraintStart_toEndOf="@+id/movieImage"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TextViewEdits" />
+
+    <TextView
+        android:id="@+id/isChecked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/falseText"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

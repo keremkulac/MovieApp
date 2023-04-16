@@ -26,13 +26,12 @@ class MainActivityViewModel {
     val popularMovies = MutableLiveData<ArrayList<Movie>>()
     private val popularTvApiImp = PopularTvApiImp()
     val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
-
-
     init {
         getLatestMovies()
         getLatestTvSeries()
         getPopularMovies()
         getPopularTvSeries()
+
     }
     private fun getLatestMovies(){
         disposable.add(
@@ -102,5 +101,8 @@ class MainActivityViewModel {
                 })
         )
     }
+
+
+
 
 }

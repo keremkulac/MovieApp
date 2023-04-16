@@ -41,6 +41,10 @@ data class Movie(
     val vote_average: Double,
     @SerializedName("vote_count")
     val vote_count: Int,
+    @SerializedName("email")
+    var email: String?,
+    @SerializedName("isChecked")
+    var isChecked: Boolean? = null,
     ) : Serializable
 
 data class LatestMovie(
