@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.MovieResult
-import com.keremkulac.movieapp.service.movie.PopularMovieApiImp
-import com.keremkulac.movieapp.service.movie.TrendMovieApiImp
-import com.keremkulac.movieapp.service.movie.UpcomingMovieApiImp
-import com.keremkulac.movieapp.util.API_KEY
+import com.keremkulac.movieapp.service.ApiServiceImp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -20,9 +17,7 @@ class MovieViewModel : ViewModel() {
     val popularMovies = MutableLiveData<ArrayList<Movie>>()
     val trendMovies = MutableLiveData<ArrayList<Movie>>()
     val upcomingMovies = MutableLiveData<ArrayList<Movie>>()
-    private val popularMovieAPIImp = PopularMovieApiImp()
-    private val trendMovieApiImp =  TrendMovieApiImp()
-    private val upcomingMovieApiImp = UpcomingMovieApiImp()
+    private val apiServiceImp = ApiServiceImp()
 
     init {
         getPopularMovies()
@@ -31,7 +26,7 @@ class MovieViewModel : ViewModel() {
     }
     private fun getPopularMovies(){
         disposable.add(
-            popularMovieAPIImp.getPopularMovies(API_KEY)
+            apiServiceImp.getPopularMovies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -46,7 +41,7 @@ class MovieViewModel : ViewModel() {
     }
     private fun getTrendMovies(){
         disposable.add(
-            trendMovieApiImp.getTrendMovies(API_KEY)
+            apiServiceImp.getTrendMovies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -61,7 +56,7 @@ class MovieViewModel : ViewModel() {
     }
     private fun getUpcomingMovies(){
         disposable.add(
-            upcomingMovieApiImp.getUpcomingMovies("4af5441468ab90c82bbdf23668f9244f")
+            apiServiceImp.getUpcomingMovies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){

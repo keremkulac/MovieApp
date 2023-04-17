@@ -6,11 +6,7 @@ import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.model.LatestTvSeries
-import com.keremkulac.movieapp.service.movie.LatestMovieApiImp
-import com.keremkulac.movieapp.service.movie.PopularMovieApiImp
-import com.keremkulac.movieapp.service.tv_series.LatestApiImp
-import com.keremkulac.movieapp.service.tv_series.PopularTvApiImp
-import com.keremkulac.movieapp.util.API_KEY
+import com.keremkulac.movieapp.service.ApiServiceImp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -20,12 +16,9 @@ class MainActivityViewModel {
     private val disposable = CompositeDisposable()
     var latestMovies = MutableLiveData<LatestMovie>()
     var latestTvSeries = MutableLiveData<LatestTvSeries>()
-    private val latestMovieApiImp = LatestMovieApiImp()
-    private val latestApiImp = LatestApiImp()
-    private val popularMovieAPIImp = PopularMovieApiImp()
     val popularMovies = MutableLiveData<ArrayList<Movie>>()
-    private val popularTvApiImp = PopularTvApiImp()
     val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
+    private val apiServiceImp = ApiServiceImp()
     init {
         getLatestMovies()
         getLatestTvSeries()
@@ -35,7 +28,7 @@ class MainActivityViewModel {
     }
     private fun getLatestMovies(){
         disposable.add(
-            latestMovieApiImp.getLatestMovie(API_KEY)
+            apiServiceImp.getLatestMovie()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<LatestMovie>(){
@@ -54,7 +47,7 @@ class MainActivityViewModel {
 
     private fun getLatestTvSeries(){
         disposable.add(
-            latestApiImp.getLatest(API_KEY)
+            apiServiceImp.getLatest()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<LatestTvSeries>(){
@@ -72,7 +65,7 @@ class MainActivityViewModel {
 
     private fun getPopularMovies(){
         disposable.add(
-            popularMovieAPIImp.getPopularMovies(API_KEY)
+            apiServiceImp.getPopularMovies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -88,7 +81,7 @@ class MainActivityViewModel {
 
     private fun getPopularTvSeries(){
         disposable.add(
-            popularTvApiImp.getTvPopular(API_KEY)
+            apiServiceImp.getTvPopular()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){

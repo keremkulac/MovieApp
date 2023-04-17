@@ -15,9 +15,7 @@ import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.model.Genre
 import com.keremkulac.movieapp.model.Genres
-import com.keremkulac.movieapp.service.movie.MovieGenreApiImp
-import com.keremkulac.movieapp.service.tv_series.TvSeriesGenreApiImp
-import com.keremkulac.movieapp.util.API_KEY
+import com.keremkulac.movieapp.service.ApiServiceImp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -29,12 +27,11 @@ class MovieDetailViewModel : ViewModel() {
     private val disposable = CompositeDisposable()
     var movieGenres = MutableLiveData<ArrayList<Genre>>()
     var tvSeriesGenres = MutableLiveData<ArrayList<Genre>>()
-    private val movieGenreApiImp = MovieGenreApiImp()
-    private val tvSeriesGenreApiImp = TvSeriesGenreApiImp()
     val myList = MutableLiveData<ArrayList<QueryDocumentSnapshot>>()
     val list = ArrayList<QueryDocumentSnapshot>()
     var idList = MutableLiveData<ArrayList<String>>()
     private val id = ArrayList<String>()
+    private val apiServiceImp = ApiServiceImp()
     init {
         getMovieGenres()
         getTvSeriesGenres()
@@ -42,7 +39,7 @@ class MovieDetailViewModel : ViewModel() {
     }
     private fun getMovieGenres(){
         disposable.add(
-            movieGenreApiImp.getMovieGenre(API_KEY)
+            apiServiceImp.getMovieGenre()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<Genres>(){
@@ -59,7 +56,7 @@ class MovieDetailViewModel : ViewModel() {
 
     private fun getTvSeriesGenres(){
         disposable.add(
-            tvSeriesGenreApiImp.getTvSeriesGenre(API_KEY)
+            apiServiceImp.getTvSeriesGenre()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<Genres>(){

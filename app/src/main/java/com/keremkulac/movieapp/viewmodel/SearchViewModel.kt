@@ -6,14 +6,7 @@ import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.adapter.SearchAdapter
 import com.keremkulac.movieapp.model.*
-import com.keremkulac.movieapp.service.movie.MovieGenreApiImp
-import com.keremkulac.movieapp.service.movie.PopularMovieApiImp
-import com.keremkulac.movieapp.service.movie.TrendMovieApiImp
-import com.keremkulac.movieapp.service.movie.UpcomingMovieApiImp
-import com.keremkulac.movieapp.service.tv_series.PopularTvApiImp
-import com.keremkulac.movieapp.service.tv_series.TopRatedTvSeriesApiImp
-import com.keremkulac.movieapp.service.tv_series.TvSeriesGenreApiImp
-import com.keremkulac.movieapp.util.API_KEY
+import com.keremkulac.movieapp.service.ApiServiceImp
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -30,17 +23,11 @@ class SearchViewModel : ViewModel(){
     var upcomingMovies = MutableLiveData<ArrayList<Movie>>()
     var movieGenres = MutableLiveData<ArrayList<Genre>>()
     var tvSeriesGenres = MutableLiveData<ArrayList<Genre>>()
+    private val apiServiceImp = ApiServiceImp()
     private val sameMovies = ArrayList<Movie>()
     private val sameTvSeries = ArrayList<Movie>()
-    private val popularMovieAPIImp = PopularMovieApiImp()
-    private val trendMovieApiImp = TrendMovieApiImp()
-    private val movieGenreApiImp = MovieGenreApiImp()
-    private val tvSeriesGenreApiImp = TvSeriesGenreApiImp()
-    private val upcomingMovieApiImp = UpcomingMovieApiImp ()
     val topRatedTvSeries = MutableLiveData<ArrayList<Movie>>()
     val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
-    private val popularTvApiImp = PopularTvApiImp()
-    private val topRatedTvSeriesApiImp = TopRatedTvSeriesApiImp()
     private  var combinedMovieList : ArrayList<Movie>
     private  var combinedTvSeriesList : ArrayList<Movie>
     private  var actionList = ArrayList<Movie>()
@@ -88,7 +75,7 @@ class SearchViewModel : ViewModel(){
 
     private fun getPopularMovies(){
         disposable.add(
-            popularMovieAPIImp.getPopularMovies(API_KEY)
+            apiServiceImp.getPopularMovies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -104,7 +91,7 @@ class SearchViewModel : ViewModel(){
 
     private fun getTrendMovies(){
         disposable.add(
-            trendMovieApiImp.getTrendMovies(API_KEY)
+            apiServiceImp.getTrendMovies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -120,7 +107,7 @@ class SearchViewModel : ViewModel(){
     }
     private fun getUpcomingMovies(){
         disposable.add(
-            upcomingMovieApiImp.getUpcomingMovies(API_KEY)
+            apiServiceImp.getUpcomingMovies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -136,7 +123,7 @@ class SearchViewModel : ViewModel(){
 
     private fun getMovieGenres(){
         disposable.add(
-            movieGenreApiImp.getMovieGenre(API_KEY)
+            apiServiceImp.getMovieGenre()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<Genres>(){
@@ -152,7 +139,7 @@ class SearchViewModel : ViewModel(){
 
     private fun getTvSeriesGenres(){
         disposable.add(
-            tvSeriesGenreApiImp.getTvSeriesGenre(API_KEY)
+            apiServiceImp.getTvSeriesGenre()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<Genres>(){
@@ -168,7 +155,7 @@ class SearchViewModel : ViewModel(){
 
     private fun getPopularTvSeries(){
         disposable.add(
-            popularTvApiImp.getTvPopular(API_KEY)
+            apiServiceImp.getTvPopular()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
@@ -184,7 +171,7 @@ class SearchViewModel : ViewModel(){
 
     private fun getTopRatedTvSeries(){
         disposable.add(
-            topRatedTvSeriesApiImp.getTopRated(API_KEY)
+            apiServiceImp.getTopRated()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
