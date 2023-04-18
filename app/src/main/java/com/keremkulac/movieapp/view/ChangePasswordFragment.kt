@@ -32,39 +32,32 @@ class ChangePasswordFragment : DialogFragment() {
 
     private fun changePassword(){
         binding.passwordConfirm.setOnClickListener {
-            val oldPass = binding.oldPassword?.text.toString()
-            val newPass1 = binding.newPassword1?.text.toString()
-            val newPass2 = binding.newPassword2?.text.toString()
+            val oldPass : String? = binding.oldPassword?.text.toString()
+            val newPass1 : String? =  binding.newPassword1?.text.toString()
+            val newPass2 : String? =  binding.newPassword2?.text.toString()
             val user = FirebaseAuth.getInstance().currentUser
-            user?.email.let {
-                if(oldPass != null) {
-                    val credential = EmailAuthProvider.getCredential(user!!.email.toString(),oldPass)
-                    user.reauthenticate(credential).addOnCompleteListener {
-                        if (it.isSuccessful){
-                            if (newPass1 != null && newPass2 != null){
-                                user.updatePassword(newPass1).addOnCompleteListener {
-                                    if(it.isSuccessful){
-                                        Toast.makeText(requireContext(),"Password updated",Toast.LENGTH_SHORT).show()
-                                        replaceFragment(AccountFragment(),requireActivity().supportFragmentManager,R.id.accountFrameLayout)
-                                    }else {
-                                        Toast.makeText(requireContext(),"Error password not updated",Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }else{
-                                Toast.makeText(requireContext(),"Passwords do not match",Toast.LENGTH_SHORT).show()
-                            }
+            val userEmail = user!!.email.toString()
+            if(userEmail == null || user.email.equals("")){
+                Toast.makeText(requireContext(),"User email is incorrect",Toast.LENGTH_SHORT).show()
 
-                        }else {
-                            Toast.makeText(requireContext(),"Error auth failed",Toast.LENGTH_SHORT).show()
-                        }
-                    }
+            }else{
+                if(oldPass == null || oldPass.equals("") || newPass1 == null || newPass1.equals("") || newPass2 == null || newPass2.equals("")){
+                    Toast.makeText(requireContext(),"Please enter all information completely",Toast.LENGTH_SHORT).show()
                 }else{
-                    Toast.makeText(requireContext(),"Your password is wrong",Toast.LENGTH_SHORT).show()
+                    val credential = EmailAuthProvider.getCredential(userEmail,oldPass)
+                    user.reauthenticate(credential).addOnSuccessListener {
+                        user.updatePassword(newPass1).addOnSuccessListener {
+                            Toast.makeText(requireContext(),"Password updated",Toast.LENGTH_SHORT).show()
+                            replaceFragment(AccountFragment(),requireActivity().supportFragmentManager,R.id.accountFrameLayout)
+                        }.addOnFailureListener {
+                            Toast.makeText(requireContext(),it.localizedMessage.toString(),Toast.LENGTH_SHORT).show()
+                        }
+                    }.addOnFailureListener {
+                        Toast.makeText(requireContext(),it.localizedMessage.toString(),Toast.LENGTH_SHORT).show()
+
+                    }
                 }
-
-
             }
-
         }
     }
 

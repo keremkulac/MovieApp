@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentRegisterBinding
@@ -48,13 +47,13 @@ class RegisterFragment : Fragment() {
     private fun saveUser(){
 
         binding.registerSignUp.setOnClickListener {
-            val email: String = binding.registerEmail.text?.trim().toString()
-            val password : String = binding.registerPassword.text?.trim().toString()
-            if(email == null || password == null){
+            val email: String? = binding.registerEmail.text?.trim().toString()
+            val password : String? = binding.registerPassword.text?.trim().toString()
+            if(email == null || email.equals("") || password.equals("") || password == null){
                 Toast.makeText(requireContext(),"Please enter all information completely",Toast.LENGTH_SHORT).show()
             }else{
                 val user = User(email,password)
-                viewModel.saveUserFromFirebase(user,requireActivity().supportFragmentManager,requireContext())
+                viewModel.saveUser(user,requireContext(),requireActivity().supportFragmentManager)
             }
         }
     }

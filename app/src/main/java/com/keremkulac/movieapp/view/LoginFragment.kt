@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.FragmentManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -54,9 +53,9 @@ class LoginFragment : Fragment() {
 
     private fun signIn(){
         binding.loginSignIn.setOnClickListener {
-            val email : String = binding.loginEmail.text?.trim().toString()
-            val password : String = binding.loginPassword.text?.trim().toString()
-            if(email == null || password == null){
+            val email : String? = binding.loginEmail.text!!.trim().toString()
+            val password : String? = binding.loginPassword.text!!.trim().toString()
+            if(email == null || email.equals("") || password.equals("") || password == null){
                 Toast.makeText(requireContext(),"Please enter all information completely", Toast.LENGTH_SHORT).show()
 
             }else{
@@ -64,6 +63,9 @@ class LoginFragment : Fragment() {
                     .addOnSuccessListener {
                         val mainActivityIntent = Intent(requireContext(), MainActivity::class.java)
                         startActivity(mainActivityIntent)
+                    }.addOnFailureListener{
+                        Toast.makeText(requireContext(),it.localizedMessage.toString(), Toast.LENGTH_SHORT).show()
+
                     }
             }
         }
