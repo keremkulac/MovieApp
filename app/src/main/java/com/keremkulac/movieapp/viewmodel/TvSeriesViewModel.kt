@@ -3,51 +3,43 @@ package com.keremkulac.movieapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.keremkulac.movieapp.Movie
-import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.service.ApiServiceImp
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class TvSeriesViewModel {
-    private val disposable = CompositeDisposable()
     val topRatedTvSeries = MutableLiveData<ArrayList<Movie>>()
     val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
     private val apiServiceImp = ApiServiceImp()
+    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        throwable.localizedMessage?.let { Log.d("TAG", it.toString()) }
+    }
     init {
         getPopularTvSeries()
         getTopRatedTvSeries()
     }
     private fun getPopularTvSeries(){
-        disposable.add(
-            apiServiceImp.getTvPopular()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        popularTvSeries.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTvPopular()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    popularTvSeries.postValue(it.movies)
+                }
+            }
+        }
     }
 
     private fun getTopRatedTvSeries(){
-        disposable.add(
-            apiServiceImp.getTopRated()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        topRatedTvSeries.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTopRated()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    topRatedTvSeries.postValue(it.movies)
+                }
+            }
+        }
     }
+
 }

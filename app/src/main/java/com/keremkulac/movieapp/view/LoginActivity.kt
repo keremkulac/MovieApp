@@ -2,21 +2,17 @@ package com.keremkulac.movieapp.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.keremkulac.movieapp.R
+import com.keremkulac.movieapp.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
+    private lateinit var binding : ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        replaceFragment(LoginFragment(),this.supportFragmentManager,R.id.loginFrameLayout)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
     }
-    private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager, layout :Int){
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(layout,fragment)
-        fragmentTransaction.commit()
 
-    }
+
 
 }

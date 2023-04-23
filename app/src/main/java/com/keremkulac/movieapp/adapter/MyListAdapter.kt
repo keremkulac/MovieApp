@@ -5,20 +5,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 
-class MyListAdapter(val list : ArrayList<QueryDocumentSnapshot>) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>(){
+class MyListAdapter(
+    private val clickListener : ClickListener,
+    val list : ArrayList<Movie>) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>(){
 
     class MyListViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-        val imageView = view.findViewById<ImageView>(R.id.moviePoster)
+        val imageView = view.findViewById<ImageView>(R.id.myListMoviePoster)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyListViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_movie, parent, false)
+            .inflate(R.layout.item_my_list, parent, false)
         return MyListViewHolder(view)
     }
 
@@ -27,9 +29,16 @@ class MyListAdapter(val list : ArrayList<QueryDocumentSnapshot>) : RecyclerView.
     }
 
     override fun onBindViewHolder(holder: MyListViewHolder, position: Int) {
-            holder.imageView.downloadFromUrl(list[position].get("poster_path").toString(), placeHolderProgressBar(holder.itemView.context))
+        holder.imageView.downloadFromUrl(list[position].poster_path.toString(),
+            placeHolderProgressBar(holder.itemView.context)
+        )
+        holder.itemView.setOnClickListener {
+            clickListener.ClickedMyListItem(list[position])
+        }
+    }
 
-
+    interface ClickListener {
+        fun ClickedMyListItem(movie : Movie)
     }
 
 }

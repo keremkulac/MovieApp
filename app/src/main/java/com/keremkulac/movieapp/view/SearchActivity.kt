@@ -1,43 +1,50 @@
 package com.keremkulac.movieapp.view
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.keremkulac.movieapp.R
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var bottomNav : BottomNavigationView
+    private lateinit var navController: NavController
+    private lateinit var auth : FirebaseAuth
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         bottomNav = findViewById(R.id.bottomNav)
         bottomNav.menu.findItem(R.id.search).isChecked = true
         bottomNav.menu.findItem(R.id.home).isChecked = false
-
+        auth = Firebase.auth
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment3) as NavHostFragment
+        navController = navHostFragment.navController
+        navController.navigate(R.id.searchFragment)
         bottomNavMenuSelect()
-        replaceFragment(SearchFragment(),supportFragmentManager,R.id.searchFrameLayout)
     }
 
-    private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager, layout :Int){
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(layout,fragment)
-        fragmentTransaction.commit()
-    }
+
 
     private fun bottomNavMenuSelect(){
         bottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.search->{
-                    val searchActivityIntent = Intent(this, SearchActivity::class.java)
-                    startActivity(searchActivityIntent)
+                    navController.navigate(R.id.searchFragment)
                     true
                 }
                 R.id.home-> {
-                    val mainActivityIntent = Intent(this, MainActivity::class.java)
-                    startActivity(mainActivityIntent)
+                    navController.navigate(R.id.mainActivity)
+                    true
+                }
+                R.id.logout->{
+                    auth.signOut()
+                    navController.navigate(R.id.loginActivity)
                     true
                 }
                 else -> {false   }

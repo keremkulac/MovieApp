@@ -38,5 +38,6 @@
     <string name="todo">TODO</string>
     <string name="trueText">true</string>
     <string name="falseText">false</string>
+    <string name="sign_up_now">New to MovieApp? Sign up now.</string>
 
 </resources>

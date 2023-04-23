@@ -45,9 +45,8 @@
         android:id="@+id/changePassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:background="@drawable/relative_layout"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="10dp"
         android:minHeight="40dp"
         android:clickable="true"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +59,8 @@
             android:layout_height="wrap_content"
             android:text="@string/change_password"
             android:layout_centerVertical="true"
-
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -76,12 +76,10 @@
 
 
     <RelativeLayout
-        android:background="@drawable/background_layout"
+        android:background="@drawable/relative_layout"
         android:id="@+id/myList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:minHeight="40dp"
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,6 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/my_list"
+            android:padding="10dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
             android:layout_centerVertical="true"
@@ -108,12 +107,10 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:background="@drawable/background_layout"
+        android:background="@drawable/relative_layout"
         android:id="@+id/logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_marginTop="20dp"
         android:minHeight="40dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -123,6 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:padding="10dp"
             android:text="@string/logout"
             android:layout_centerVertical="true"
             android:textColor="@color/white"

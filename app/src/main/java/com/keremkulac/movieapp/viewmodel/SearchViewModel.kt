@@ -3,21 +3,19 @@ package com.keremkulac.movieapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.*
 import com.keremkulac.movieapp.Movie
-import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.adapter.SearchAdapter
 import com.keremkulac.movieapp.model.*
 import com.keremkulac.movieapp.service.ApiServiceImp
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class SearchViewModel : ViewModel(){
     val movieFoundError = MutableLiveData<Boolean>()
-    private val disposable = CompositeDisposable()
     var popularMovies = MutableLiveData<ArrayList<Movie>>()
     var trendMovies = MutableLiveData<ArrayList<Movie>>()
     var upcomingMovies = MutableLiveData<ArrayList<Movie>>()
@@ -60,6 +58,9 @@ class SearchViewModel : ViewModel(){
     private var allGenres = ArrayList<Genre>()
     var allMovieListHm = HashMap<String,ArrayList<Movie>>()
     var genreWithSize = MutableLiveData<java.util.ArrayList<String>>()
+    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        throwable.localizedMessage?.let { Log.d("TAG", it.toString()) }
+    }
     init {
 
         getPopularMovies()
@@ -74,115 +75,79 @@ class SearchViewModel : ViewModel(){
     }
 
     private fun getPopularMovies(){
-        disposable.add(
-            apiServiceImp.getPopularMovies()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        popularMovies.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getPopularMovies()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    popularMovies.postValue(it.movies)
+                }
+            }
+        }
     }
 
     private fun getTrendMovies(){
-        disposable.add(
-            apiServiceImp.getTrendMovies()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        trendMovies.value = t.movies
-
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTrendMovies()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    trendMovies.postValue(it.movies)
+                }
+            }
+        }
     }
     private fun getUpcomingMovies(){
-        disposable.add(
-            apiServiceImp.getUpcomingMovies()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        upcomingMovies.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getUpcomingMovies()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    upcomingMovies.postValue(it.movies)
+                }
+            }
+        }
     }
 
     private fun getMovieGenres(){
-        disposable.add(
-            apiServiceImp.getMovieGenre()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<Genres>(){
-                    override fun onSuccess(t: Genres) {
-                        movieGenres.value = t.genres
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getMovieGenre()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    movieGenres.postValue(it.genres)
+                }
+            }
+        }
     }
 
     private fun getTvSeriesGenres(){
-        disposable.add(
-            apiServiceImp.getTvSeriesGenre()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<Genres>(){
-                    override fun onSuccess(t: Genres) {
-                        tvSeriesGenres.value = t.genres
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTvSeriesGenre()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    tvSeriesGenres.postValue(it.genres)
+                }
+            }
+        }
     }
 
     private fun getPopularTvSeries(){
-        disposable.add(
-            apiServiceImp.getTvPopular()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        popularTvSeries.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTvPopular()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    popularTvSeries.postValue(it.movies)
+                }
+            }
+        }
     }
 
     private fun getTopRatedTvSeries(){
-        disposable.add(
-            apiServiceImp.getTopRated()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        topRatedTvSeries.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTopRated()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    topRatedTvSeries.postValue(it.movies)
+                }
+            }
+        }
     }
 
 
@@ -202,7 +167,7 @@ class SearchViewModel : ViewModel(){
    private fun movieGenreCount(allMovieList : ArrayList<Movie>){
         for (movie in allMovieList){
             movie.genre_ids.let {
-                for (movieID in movie.genre_ids){
+                for (movieID in movie.genre_ids!!){
                     when(movieID){
                         28-> actionList.add(movie)
                         12-> adventureList.add(movie)
@@ -230,7 +195,7 @@ class SearchViewModel : ViewModel(){
 
        for (tvSeries in combinedTvSeriesList){
            tvSeries.genre_ids.let {
-               for (tvSeriesID in tvSeries.genre_ids){
+               for (tvSeriesID in tvSeries.genre_ids!!){
                    when(tvSeriesID){
                        10759-> actionAndAdventureList.add(tvSeries)
                        16-> animationList.add(tvSeries)
@@ -331,7 +296,7 @@ class SearchViewModel : ViewModel(){
         val sizeList = ArrayList<String>()
         var size : String
         for(genre in allGenres){
-            genreNames.add(genre.name)
+            genre.name?.let { genreNames.add(it) }
             if(allMovieListHm[genre.name] != null){
                 size = allMovieListHm[genre.name]!!.size.toString()
                 sizeList.add(genre.name+"(${size})")

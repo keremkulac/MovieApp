@@ -4,20 +4,18 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.keremkulac.movieapp.Movie
-import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.service.ApiServiceImp
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import kotlin.collections.ArrayList
 
 class MovieViewModel : ViewModel() {
-    private val disposable = CompositeDisposable()
     val popularMovies = MutableLiveData<ArrayList<Movie>>()
     val trendMovies = MutableLiveData<ArrayList<Movie>>()
     val upcomingMovies = MutableLiveData<ArrayList<Movie>>()
     private val apiServiceImp = ApiServiceImp()
+    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        throwable.localizedMessage?.let { Log.d("TAG", it.toString()) }
+    }
 
     init {
         getPopularMovies()
@@ -25,48 +23,34 @@ class MovieViewModel : ViewModel() {
         getUpcomingMovies()
     }
     private fun getPopularMovies(){
-        disposable.add(
-            apiServiceImp.getPopularMovies()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        popularMovies.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getPopularMovies()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    popularMovies.postValue(it.movies)
+                }
+            }
+        }
     }
     private fun getTrendMovies(){
-        disposable.add(
-            apiServiceImp.getTrendMovies()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        trendMovies.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTrendMovies()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    trendMovies.postValue(it.movies)
+                }
+            }
+        }
     }
     private fun getUpcomingMovies(){
-        disposable.add(
-            apiServiceImp.getUpcomingMovies()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<MovieResult>(){
-                    override fun onSuccess(t: MovieResult) {
-                        upcomingMovies.value = t.movies
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getUpcomingMovies()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    upcomingMovies.postValue(it.movies)
+                }
+            }
+        }
     }
+
 }

@@ -4,27 +4,27 @@ import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.model.Genres
 import com.keremkulac.movieapp.model.LatestTvSeries
-import io.reactivex.Single
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
     @GET("movie/popular")
-    fun getPopularMovies(@Query("api_key") key : String) : Single<MovieResult>
+    suspend fun getPopularMovies(@Query("api_key") key : String) : Response<MovieResult>
     @GET("trending/all/day")
-    fun getTrendMovies(@Query("api_key") key : String) : Single<MovieResult>
+    suspend fun getTrendMovies(@Query("api_key") key : String) : Response<MovieResult>
     @GET("movie/upcoming")
-    fun getUpcomingMovies(@Query("api_key") key : String) : Single<MovieResult>
+    suspend fun getUpcomingMovies(@Query("api_key") key : String) : Response<MovieResult>
     @GET("genre/movie/list")
-    fun getMovieGenre(@Query("api_key") key : String) : Single<Genres>
+    suspend fun getMovieGenre(@Query("api_key") key : String) : Response<Genres>
     @GET("tv/latest")
-    fun getLatest(@Query("api_key") key : String) : Single<LatestTvSeries>
+    suspend fun getLatest(@Query("api_key") key : String) : Response<LatestTvSeries>
     @GET("tv/popular")
-    fun getTvPopular(@Query("api_key") key : String) : Single<MovieResult>
+    suspend fun getTvPopular(@Query("api_key") key : String) : Response<MovieResult>
     @GET("tv/top_rated")
-    fun getTopRated(@Query("api_key") key : String) : Single<MovieResult>
+    suspend fun getTopRated(@Query("api_key") key : String) : Response<MovieResult>
     @GET("genre/tv/list")
-    fun getTvSeriesGenre(@Query("api_key") key : String) : Single<Genres>
+    suspend fun getTvSeriesGenre(@Query("api_key") key : String) : Response<Genres>
     @GET("movie/latest")
-    fun getLatestMovie(@Query("api_key") key : String) : Single<LatestMovie>
+    suspend fun getLatestMovie(@Query("api_key") key : String) : Response<LatestMovie >
 }

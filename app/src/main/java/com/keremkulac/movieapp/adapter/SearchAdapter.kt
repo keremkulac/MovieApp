@@ -33,9 +33,12 @@ class SearchAdapter(
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         holder.apply { bind(list[position]) }
-        holder.binding.moviePoster.downloadFromUrl(list[position].poster_path,
-            placeHolderProgressBar(holder.itemView.context)
-        )
+        list[position].poster_path?.let {
+            holder.binding.moviePoster.downloadFromUrl(
+                it,
+                placeHolderProgressBar(holder.itemView.context)
+            )
+        }
         holder.itemView.setOnClickListener {
             clickListener.ClickedMovieItem(list[position])
         }

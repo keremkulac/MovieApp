@@ -14,61 +14,50 @@ import com.google.firebase.ktx.Firebase
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.model.Genre
-import com.keremkulac.movieapp.model.Genres
 import com.keremkulac.movieapp.service.ApiServiceImp
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class MovieDetailViewModel : ViewModel() {
-    private val disposable = CompositeDisposable()
-    var movieGenres = MutableLiveData<ArrayList<Genre>>()
-    var tvSeriesGenres = MutableLiveData<ArrayList<Genre>>()
+    var movieGenres = MutableLiveData<ArrayList<Genre>?>()
+    var tvSeriesGenres = MutableLiveData<ArrayList<Genre>?>()
     val myList = MutableLiveData<ArrayList<QueryDocumentSnapshot>>()
     val list = ArrayList<QueryDocumentSnapshot>()
     var idList = MutableLiveData<ArrayList<String>>()
     private val id = ArrayList<String>()
     private val apiServiceImp = ApiServiceImp()
+    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        throwable.localizedMessage?.let { Log.d("TAG", it.toString()) }
+    }
     init {
         getMovieGenres()
         getTvSeriesGenres()
         getMyList()
     }
     private fun getMovieGenres(){
-        disposable.add(
-            apiServiceImp.getMovieGenre()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<Genres>(){
-                    override fun onSuccess(t: Genres) {
-                        movieGenres.value = t.genres
-
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getMovieGenre()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    movieGenres.postValue(it.genres)
+                }
+            }
+        }
     }
 
     private fun getTvSeriesGenres(){
-        disposable.add(
-            apiServiceImp.getTvSeriesGenre()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableSingleObserver<Genres>(){
-                    override fun onSuccess(t: Genres) {
-                        tvSeriesGenres.value = t.genres
-
-                    }
-                    override fun onError(e: Throwable) {
-                        e.localizedMessage?.let { Log.d("TAG", it) }
-                    }
-                })
-        )
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val result = apiServiceImp.getTvSeriesGenre()
+            if(result.isSuccessful){
+                result.body()?.let {
+                    tvSeriesGenres.postValue(it.genres)
+                }
+            }
+        }
     }
 
     fun splitDate(date : String): String{
@@ -112,7 +101,7 @@ class MovieDetailViewModel : ViewModel() {
                 movie!!.email = user!!.email
                 movie.isChecked = true
                 db.collection("MyList")
-                    .add(movie!!)
+                    .add(movie)
                     .addOnSuccessListener { Toast.makeText(context,"Added to your movie list",
                         Toast.LENGTH_SHORT).show()                    }
                     .addOnFailureListener { e ->

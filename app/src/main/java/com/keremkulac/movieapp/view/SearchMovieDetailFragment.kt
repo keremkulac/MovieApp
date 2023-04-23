@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentSearchMovieDetailBinding
@@ -19,9 +21,14 @@ class SearchMovieDetailFragment : Fragment(){
 
     private lateinit var binding : FragmentSearchMovieDetailBinding
     private lateinit var viewModel : SearchMovieDetailViewModel
+    private lateinit var navController: NavController
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchMovieDetailBinding.inflate(inflater)
         viewModel = SearchMovieDetailViewModel()
+        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment3) as NavHostFragment
+        navController = navHostFragment.navController
         return binding.root
     }
 
@@ -36,7 +43,6 @@ class SearchMovieDetailFragment : Fragment(){
         activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.searchFrameLayout,SearchFragment())
                 fragmentTransaction.commit()
 
             }
@@ -45,10 +51,11 @@ class SearchMovieDetailFragment : Fragment(){
 
     private fun bindMovieItem(){
         var click  = 0
-        val  arg =  requireArguments().getSerializable("movie") as Movie
-        observeLiveData(arg.genre_ids,binding.movieDetailGenre)
-        binding.movieDetailPoster.downloadFromUrl(arg.poster_path, placeHolderProgressBar(requireContext()))
-        binding.movieDetailBackdrop.downloadFromUrl(arg.backdrop_path, placeHolderProgressBar(requireContext()))
+        val arg = arguments?.getSerializable("movie") as Movie?
+        arg?.let {
+        arg.genre_ids?.let { observeLiveData(it,binding.movieDetailGenre) }
+        arg.poster_path?.let { binding.movieDetailPoster.downloadFromUrl(it, placeHolderProgressBar(requireContext())) }
+            arg.backdrop_path?.let { it1 -> binding.movieDetailBackdrop.downloadFromUrl(it1, placeHolderProgressBar(requireContext())) }
         binding.movieDetailOverview.text = arg.overview
         if(arg.release_date == null){
             binding.movieDetailReleaseDate.text = getString(R.string.unknown)
@@ -75,6 +82,7 @@ class SearchMovieDetailFragment : Fragment(){
                 binding.movieDetailOverview.visibility = View.GONE
             }
         }
+        }
     }
 
     private fun observeLiveData(list : ArrayList<Int>,textView : TextView){
@@ -94,9 +102,7 @@ class SearchMovieDetailFragment : Fragment(){
 
     private fun back(){
         binding.movieDetailBackButton.setOnClickListener {
-            val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.searchFrameLayout,SearchFragment())
-            fragmentTransaction.commit()
+            navController.navigate(R.id.action_searchMovieDetailFragment_to_searchFragment)
         }
     }
 

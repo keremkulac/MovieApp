@@ -5,34 +5,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentChangePasswordBinding
-import com.keremkulac.movieapp.util.replaceFragment
 
 
-class ChangePasswordFragment : DialogFragment() {
+class ChangePasswordFragment : Fragment() {
 
     private lateinit var binding : FragmentChangePasswordBinding
+    private lateinit var navController : NavController
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentChangePasswordBinding.inflate(inflater)
         changePasswordToAccount()
         changePassword()
+        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
+        navController = navHostFragment.navController
         return binding.root
     }
 
     private fun changePasswordToAccount(){
         binding.changePasswordToAccount.setOnClickListener {
-            replaceFragment(AccountFragment(),requireActivity().supportFragmentManager,R.id.accountFrameLayout)
+            navController.navigate(R.id.action_changePasswordFragment_to_accountFragment)
         }
     }
 
     private fun changePassword(){
         binding.passwordConfirm.setOnClickListener {
-            val oldPass : String? = binding.oldPassword?.text.toString()
+            val oldPass : String? = binding.oldPassword.text.toString()
             val newPass1 : String? =  binding.newPassword1?.text.toString()
             val newPass2 : String? =  binding.newPassword2?.text.toString()
             val user = FirebaseAuth.getInstance().currentUser
@@ -48,12 +53,13 @@ class ChangePasswordFragment : DialogFragment() {
                     user.reauthenticate(credential).addOnSuccessListener {
                         user.updatePassword(newPass1).addOnSuccessListener {
                             Toast.makeText(requireContext(),"Password updated",Toast.LENGTH_SHORT).show()
-                            replaceFragment(AccountFragment(),requireActivity().supportFragmentManager,R.id.accountFrameLayout)
+                            navController.navigate(R.id.action_changePasswordFragment_to_accountFragment)
+
                         }.addOnFailureListener {
-                            Toast.makeText(requireContext(),it.localizedMessage.toString(),Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), it.localizedMessage!!.toString(),Toast.LENGTH_SHORT).show()
                         }
                     }.addOnFailureListener {
-                        Toast.makeText(requireContext(),it.localizedMessage.toString(),Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), it.localizedMessage!!.toString(),Toast.LENGTH_SHORT).show()
 
                     }
                 }

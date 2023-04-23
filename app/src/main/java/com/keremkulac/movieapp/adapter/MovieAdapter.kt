@@ -1,21 +1,21 @@
 package com.keremkulac.movieapp.adapter
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.keremkulac.movieapp.Movie
-import com.keremkulac.movieapp.view.MovieDetailFragment
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.ItemMovieBinding
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 
 class MovieAdapter(
-    var activity : FragmentActivity,
-    var popularMovieList : ArrayList<Movie>): RecyclerView.Adapter<MovieAdapter.PopularViewHolder>(){
+    var popularMovieList : ArrayList<Movie>,
+    ): RecyclerView.Adapter<MovieAdapter.PopularViewHolder>(){
 
     class PopularViewHolder (val binding : ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(popularMovies: Movie){
@@ -35,16 +35,14 @@ class MovieAdapter(
 
     override fun onBindViewHolder(holder: PopularViewHolder, position: Int) {
         holder.apply { bind(popularMovieList[position]) }
-        holder.binding.moviePoster.downloadFromUrl(popularMovieList[position].poster_path,
-            placeHolderProgressBar(holder.itemView.context))
+
+        popularMovieList[position].poster_path?.let {
+            holder.binding.moviePoster.downloadFromUrl(
+                it, placeHolderProgressBar(holder.itemView.context))
+        }
         holder.itemView.setOnClickListener {
-            val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
-            val args = Bundle()
-            val movieDetailFragment = MovieDetailFragment()
-            args.putSerializable("movie",popularMovieList[position])
-            movieDetailFragment.arguments = args
-            movieDetailFragment.show(activity.supportFragmentManager,"TAG")
-            fragmentTransaction.commit()
+            val bundle = bundleOf("movie" to popularMovieList[position])
+            holder.itemView.findNavController().navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
         }
     }
     fun filterList(filterList: ArrayList<Movie>) {

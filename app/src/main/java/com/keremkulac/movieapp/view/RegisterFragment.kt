@@ -6,8 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.FragmentManager
-import com.keremkulac.movieapp.R
+import androidx.navigation.Navigation
 import com.keremkulac.movieapp.databinding.FragmentRegisterBinding
 import com.keremkulac.movieapp.model.User
 import com.keremkulac.movieapp.viewmodel.RegisterViewModel
@@ -19,7 +18,6 @@ class RegisterFragment : Fragment() {
     private lateinit var viewModel : RegisterViewModel
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
        binding = FragmentRegisterBinding.inflate(inflater)
-      //  (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
         viewModel = RegisterViewModel()
         backToLogin()
         saveUser()
@@ -27,22 +25,14 @@ class RegisterFragment : Fragment() {
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     private fun backToLogin(){
         binding.registerBackToLoginScreen.setOnClickListener {
-            replaceFragment(LoginFragment(),requireActivity().supportFragmentManager,R.id.loginFrameLayout)
+            val action = RegisterFragmentDirections.actionRegisterFragmentToLoginFragment()
+            Navigation.findNavController(it).navigate(action)
         }
     }
 
-    private fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager, layout :Int){
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(layout,fragment)
-        fragmentTransaction.commit()
-
-    }
 
     private fun saveUser(){
 

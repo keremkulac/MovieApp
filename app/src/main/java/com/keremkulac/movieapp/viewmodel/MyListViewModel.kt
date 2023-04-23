@@ -5,13 +5,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.keremkulac.movieapp.Movie
 
 class MyListViewModel : ViewModel() {
-    val myList = MutableLiveData<ArrayList<QueryDocumentSnapshot>>()
-    private var list = ArrayList<QueryDocumentSnapshot>()
+    val myList = MutableLiveData<ArrayList<Movie>>()
+    private var mylist1 = ArrayList<Movie>()
     init {
         getMyList()
     }
@@ -24,10 +24,10 @@ class MyListViewModel : ViewModel() {
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    list.add(document)
+                    val movie: Movie = document.toObject(Movie::class.java)
+                    mylist1.add(movie)
                 }
-                myList.value = list
-
+                myList.value = mylist1
             }
             .addOnFailureListener { exception ->
                 Log.w(ContentValues.TAG, "Error getting documents: ", exception)

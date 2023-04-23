@@ -1,10 +1,11 @@
 package com.keremkulac.movieapp.adapter
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -12,10 +13,8 @@ import com.keremkulac.movieapp.databinding.ItemTvSeriesBinding
 import com.keremkulac.movieapp.model.TvSeries
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
-import com.keremkulac.movieapp.view.MovieDetailFragment
 
 class TvSeriesAdapter(
-    var activity : FragmentActivity,
     var tvSeriesList : ArrayList<Movie>): RecyclerView.Adapter<TvSeriesAdapter.TvSeriesViewHolder>(){
 
     class TvSeriesViewHolder (val binding : ItemTvSeriesBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -38,23 +37,20 @@ class TvSeriesAdapter(
     override fun onBindViewHolder(holder: TvSeriesViewHolder, position: Int) {
         holder.apply { bind(tvSeriesList[position]) }
         if(tvSeriesList[position].poster_path != null) {
-            holder.binding.tvSeriesPoster.downloadFromUrl(
-                tvSeriesList[position].poster_path,
-                placeHolderProgressBar(holder.itemView.context)
-            )
+            tvSeriesList[position].poster_path?.let {
+                holder.binding.tvSeriesPoster.downloadFromUrl(
+                    it,
+                    placeHolderProgressBar(holder.itemView.context)
+                )
+            }
         }
         holder.itemView.setOnClickListener {
-            val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
-            val args = Bundle()
-            val movieDetailFragment = MovieDetailFragment()
-            args.putSerializable("tvSeries",tvSeriesList[position])
-            movieDetailFragment.arguments = args
-            movieDetailFragment.show(activity.supportFragmentManager,"TAG")
-            fragmentTransaction.commit()
+            val bundle = bundleOf("movie" to tvSeriesList[position])
+            holder.itemView.findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
         }
     }
     fun filterList(filterList: ArrayList<TvSeries>) {
-      //  tvSeriesList.addAll(filterList)
-       // notifyDataSetChanged()
+    //  tvSeriesList.addAll(filterList)
+    // notifyDataSetChanged()
     }
 }
