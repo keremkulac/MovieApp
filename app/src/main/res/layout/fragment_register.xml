@@ -6,7 +6,7 @@
     android:background="#F307274D"
 
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.RegisterFragment">
+    tools:context=".ui.register.RegisterFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBar"

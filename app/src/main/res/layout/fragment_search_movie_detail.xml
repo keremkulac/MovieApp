@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F207274D"
-    tools:context=".view.SearchMovieDetailFragment">
+    tools:context=".ui.search_movie_detail.SearchMovieDetailFragment">
 
     <ImageView
         android:id="@+id/movieDetailBackButton"

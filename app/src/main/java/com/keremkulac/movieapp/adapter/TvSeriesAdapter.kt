@@ -4,13 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.ItemTvSeriesBinding
-import com.keremkulac.movieapp.model.TvSeries
+import com.keremkulac.movieapp.repository.model.TvSeries
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F207274D"
-    tools:context=".view.AccountFragment">
+    tools:context=".ui.account.AccountFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBar"

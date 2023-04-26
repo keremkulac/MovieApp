@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F207274D"
-    tools:context=".view.SearchActivity">
+    tools:context=".ui.search.SearchActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment3"

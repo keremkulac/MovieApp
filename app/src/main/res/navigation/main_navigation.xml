@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/tvSeriesFragment"
-        android:name="com.keremkulac.movieapp.view.TvSeriesFragment"
+        android:name="com.keremkulac.movieapp.ui.tv_series.TvSeriesFragment"
         android:label="fragment_tv_series"
         tools:layout="@layout/fragment_tv_series" >
         <action
@@ -19,12 +19,12 @@
     </fragment>
     <activity
         android:id="@+id/mainActivity"
-        android:name="com.keremkulac.movieapp.view.MainActivity"
+        android:name="com.keremkulac.movieapp.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
     <fragment
         android:id="@+id/movieFragment"
-        android:name="com.keremkulac.movieapp.view.MovieFragment"
+        android:name="com.keremkulac.movieapp.ui.movie.MovieFragment"
         android:label="fragment_movie"
         tools:layout="@layout/fragment_movie" >
         <action
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/accountFragment"
-        android:name="com.keremkulac.movieapp.view.AccountFragment"
+        android:name="com.keremkulac.movieapp.ui.account.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" >
         <action
@@ -48,7 +48,7 @@
     </fragment>
     <fragment
         android:id="@+id/myListFragment"
-        android:name="com.keremkulac.movieapp.view.MyListFragment"
+        android:name="com.keremkulac.movieapp.ui.account.MyListFragment"
         android:label="fragment_my_list"
         tools:layout="@layout/fragment_my_list" >
         <action
@@ -60,7 +60,7 @@
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
-        android:name="com.keremkulac.movieapp.view.ChangePasswordFragment"
+        android:name="com.keremkulac.movieapp.ui.account.ChangePasswordFragment"
         android:label="ChangePasswordFragment" >
         <action
             android:id="@+id/action_changePasswordFragment_to_accountFragment"
@@ -70,16 +70,16 @@
 
     <activity
         android:id="@+id/loginActivity"
-        android:name="com.keremkulac.movieapp.view.LoginActivity"
+        android:name="com.keremkulac.movieapp.ui.login.LoginActivity"
         android:label="LoginActivity" />
     <activity
         android:id="@+id/searchActivity"
-        android:name="com.keremkulac.movieapp.view.SearchActivity"
+        android:name="com.keremkulac.movieapp.ui.search.SearchActivity"
         android:label="activity_search"
         tools:layout="@layout/activity_search" />
     <dialog
         android:id="@+id/movieDetailFragment"
-        android:name="com.keremkulac.movieapp.view.MovieDetailFragment"
+        android:name="com.keremkulac.movieapp.ui.movie_detail.MovieDetailFragment"
         android:label="fragment_movie_detail"
         tools:layout="@layout/fragment_movie_detail" >
         <argument
