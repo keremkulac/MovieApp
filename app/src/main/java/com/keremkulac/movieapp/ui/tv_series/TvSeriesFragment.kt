@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class TvSeriesFragment : Fragment() {
+class TvSeriesFragment : Fragment(), TvSeriesAdapter.ClickListener {
     private val viewModel  by viewModels<TvSeriesViewModel>()
     private lateinit var binding : FragmentTvSeriesBinding
     private lateinit var popularAdapter : TvSeriesAdapter
@@ -46,7 +46,7 @@ class TvSeriesFragment : Fragment() {
 
     private fun observeLiveData(){
         viewModel.popularTvSeries.observe(viewLifecycleOwner) { popularList ->
-            popularAdapter = TvSeriesAdapter(popularList)
+            popularAdapter = TvSeriesAdapter(this,popularList)
             binding.popularTvSeriesRecyclerView.layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.HORIZONTAL, false
@@ -69,7 +69,7 @@ class TvSeriesFragment : Fragment() {
         }
 
         viewModel.topRatedTvSeries.observe(viewLifecycleOwner){topRated->
-            topRatedAdapter = TvSeriesAdapter(topRated)
+            topRatedAdapter = TvSeriesAdapter(this,topRated)
             binding.topRatedTvSeriesRecyclerView.layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.HORIZONTAL, false
@@ -85,4 +85,9 @@ class TvSeriesFragment : Fragment() {
                 it.findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
                 }
             }
+
+    override fun ClickedTvSeriesItem(movie: Movie) {
+        val bundle = bundleOf("movie" to movie)
+        navController.navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
     }
+}

@@ -1,24 +1,24 @@
-package com.keremkulac.movieapp.ui.account
+package com.keremkulac.movieapp.ui.account.my_list
 
 import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.keremkulac.movieapp.Movie
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MyListViewModel : ViewModel() {
+@HiltViewModel
+class MyListViewModel @Inject constructor(private val db : FirebaseFirestore,private val auth: FirebaseAuth) : ViewModel() {
     val myList = MutableLiveData<ArrayList<Movie>>()
-    private var mylist1 = ArrayList<Movie>()
+    private val mylist1 = ArrayList<Movie>()
     init {
         getMyList()
     }
     private fun getMyList(){
-        val db = Firebase.firestore
-        val user = FirebaseAuth.getInstance().currentUser
-
+        val user = auth.currentUser
         db.collection("MyList")
             .whereEqualTo("email",user!!.email.toString() )
             .get()

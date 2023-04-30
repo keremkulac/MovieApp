@@ -44,11 +44,6 @@ class SearchActivity : AppCompatActivity() {
                     navController.navigate(R.id.mainActivity)
                     true
                 }
-                R.id.logout->{
-                    auth.signOut()
-                    navController.navigate(R.id.loginActivity)
-                    true
-                }
                 else -> {false   }
             }
         }

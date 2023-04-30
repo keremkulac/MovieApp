@@ -19,6 +19,7 @@
             android:id="@+id/moviePoster"
             android:layout_width="match_parent"
             android:layout_height="400dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/imageview_corner"
             android:contentDescription="@string/tag" />
 

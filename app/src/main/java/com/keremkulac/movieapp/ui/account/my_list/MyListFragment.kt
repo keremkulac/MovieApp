@@ -1,4 +1,4 @@
-package com.keremkulac.movieapp.ui.account
+package com.keremkulac.movieapp.ui.account.my_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,24 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.adapter.MyListAdapter
 import com.keremkulac.movieapp.databinding.FragmentMyListBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MyListFragment : Fragment(),MyListAdapter.ClickListener {
 
     private lateinit var binding : FragmentMyListBinding
-    private lateinit var viewModel : MyListViewModel
+    private val viewModel by viewModels<MyListViewModel>()
     private lateinit var adapter : MyListAdapter
     private lateinit var navController: NavController
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMyListBinding.inflate(inflater)
-        viewModel = MyListViewModel()
         val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
         navController = navHostFragment.navController
         return binding.root
@@ -55,6 +56,6 @@ class MyListFragment : Fragment(),MyListAdapter.ClickListener {
 
     override fun ClickedMyListItem(movie: Movie) {
         val bundle = bundleOf("movie" to movie)
-         binding.root.findNavController().navigate(R.id.action_myListFragment_to_movieDetailFragment,bundle)
+        navController.navigate(R.id.action_myListFragment_to_movieDetailFragment,bundle)
     }
 }

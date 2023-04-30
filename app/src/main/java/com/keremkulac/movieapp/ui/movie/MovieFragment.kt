@@ -5,7 +5,8 @@ import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -16,7 +17,7 @@ import com.keremkulac.movieapp.util.placeHolderProgressBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MovieFragment : Fragment() {
+class MovieFragment : Fragment(),MovieAdapter.ClickListener {
 
     private lateinit var binding : FragmentMovieBinding
     private lateinit var trendAdapter : MovieAdapter
@@ -25,8 +26,13 @@ class MovieFragment : Fragment() {
     private  val viewModel by viewModels<MovieViewModel>()
     private  var popularMovie : Movie? = null
     private var randomNumber : Int = 0
+    private lateinit var navController : NavController
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieBinding.inflate(inflater)
+        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
+        navController = navHostFragment.navController
       return binding.root
 
     }
@@ -39,7 +45,7 @@ class MovieFragment : Fragment() {
 
     private fun observeLiveData(){
         viewModel.popularMovies.observe(viewLifecycleOwner) { popularList ->
-            popularAdapter = MovieAdapter(popularList)
+            popularAdapter = MovieAdapter(this,popularList)
             binding.popularMovieRecyclerView.layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.HORIZONTAL, false
@@ -61,7 +67,7 @@ class MovieFragment : Fragment() {
             }
         }
         viewModel.trendMovies.observe(viewLifecycleOwner){trendMovies->
-            trendAdapter = MovieAdapter(trendMovies)
+            trendAdapter = MovieAdapter(this,trendMovies)
             binding.trendMovieRecyclerView.layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.HORIZONTAL, false
@@ -71,7 +77,7 @@ class MovieFragment : Fragment() {
         }
 
         viewModel.upcomingMovies.observe(viewLifecycleOwner){upcomingMovies->
-            upcomingAdapter = MovieAdapter(upcomingMovies)
+            upcomingAdapter = MovieAdapter(this,upcomingMovies)
             binding.upcomingMovieRecyclerView.layoutManager = LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.HORIZONTAL, false
@@ -83,7 +89,12 @@ class MovieFragment : Fragment() {
     private fun popularPosterClick(){
         binding.popularMoviePoster.setOnClickListener {
             val bundle = bundleOf("movie" to popularMovie)
-            it.findNavController().navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
+            navController.navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
         }
+    }
+
+    override fun ClickedMovieItem(movie: Movie) {
+           val bundle = bundleOf("movie" to movie)
+        navController.navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
     }
 }

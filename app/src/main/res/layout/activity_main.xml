@@ -52,6 +52,7 @@
                 android:id="@+id/selectedTV"
                 android:layout_width="70dp"
                 android:layout_height="2dp"
+                android:layout_marginTop="5dp"
                 android:background="@color/white"
                 android:layout_below="@+id/selectTVSeries"
                 app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +75,7 @@
                 android:id="@+id/selectedMovie"
                 android:layout_width="44dp"
                 android:layout_height="2dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginStart="20dp"
                 android:background="@color/white"
                 android:layout_below="@+id/selectMovie"
@@ -81,16 +83,16 @@
 
             <TextView
                 android:id="@+id/account"
-                android:text=" K "
-                android:background="#0050F1"
-                android:textColor="@color/white"
+                android:padding="6dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="10dp"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_marginEnd="10dp"
+                android:background="#0050F1"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:ignore="RelativeOverlap" />
 
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
@@ -111,7 +113,8 @@
         android:scrollIndicators="left"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu"
+        tools:ignore="VisualLintBottomNav" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

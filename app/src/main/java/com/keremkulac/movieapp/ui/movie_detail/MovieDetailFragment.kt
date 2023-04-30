@@ -22,12 +22,10 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding : FragmentMovieDetailBinding
     private val viewModel  by viewModels<MovieDetailViewModel>()
     private var genres = ArrayList<Genre>()
-    private var tvSeriesGenre = ArrayList<Genre>()
     private var movie : Movie? = null
     private var tvSeries : Movie? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieDetailBinding.inflate(inflater)
-       // viewModel = MovieDetailViewModel()
         return binding.root
     }
 
@@ -50,25 +48,6 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
                     if (genreItem.id == item) {
                         builder.append(genreItem.name)
                         builder.append("  ")
-                    }
-                }
-            }
-            textView.text = builder.toString()
-        }
-    }
-    private fun observeTvSeriesGenres(list : ArrayList<Int>,textView : TextView){
-        viewModel.tvSeriesGenres.observe(viewLifecycleOwner){tvSeriesGenres->
-            val builder = StringBuilder()
-            if (tvSeriesGenres != null) {
-                tvSeriesGenre = tvSeriesGenres
-            }
-            for (item in list) {
-                if (tvSeriesGenres != null) {
-                    for (genreItem in tvSeriesGenres) {
-                        if (genreItem.id == item) {
-                            builder.append(genreItem.name)
-                            builder.append("  ")
-                        }
                     }
                 }
             }

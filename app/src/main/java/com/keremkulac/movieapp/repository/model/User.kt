@@ -1,6 +1,9 @@
 package com.keremkulac.movieapp.repository.model
 
+import java.io.Serializable
+
 data class User(
-    var email : String,
-    var password : String
-)
+    var email : String? = null,
+    var firstname : String? = null,
+    var lastname : String? = null,
+    ): Serializable

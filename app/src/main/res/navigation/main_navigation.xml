@@ -45,10 +45,13 @@
         <action
             android:id="@+id/action_accountFragment_to_changePasswordFragment"
             app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_myMembershipFragment"
+            app:destination="@id/myMembershipFragment" />
     </fragment>
     <fragment
         android:id="@+id/myListFragment"
-        android:name="com.keremkulac.movieapp.ui.account.MyListFragment"
+        android:name="com.keremkulac.movieapp.ui.account.my_list.MyListFragment"
         android:label="fragment_my_list"
         tools:layout="@layout/fragment_my_list" >
         <action
@@ -60,11 +63,11 @@
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
-        android:name="com.keremkulac.movieapp.ui.account.ChangePasswordFragment"
+        android:name="com.keremkulac.movieapp.ui.account.change_password.ChangePasswordFragment"
         android:label="ChangePasswordFragment" >
         <action
-            android:id="@+id/action_changePasswordFragment_to_accountFragment"
-            app:destination="@id/accountFragment" />
+            android:id="@+id/action_changePasswordFragment_to_myMembershipFragment"
+            app:destination="@id/myMembershipFragment" />
     </fragment>
 
 
@@ -87,4 +90,21 @@
             app:nullable="true"
             app:argType="com.keremkulac.movieapp.Movie" />
     </dialog>
+    <fragment
+        android:id="@+id/myMembershipFragment"
+        android:name="com.keremkulac.movieapp.ui.account.my_membership.MyMembershipFragment"
+        android:label="fragment_my_membership"
+        tools:layout="@layout/fragment_my_membership" >
+        <action
+            android:id="@+id/action_myMembershipFragment_to_accountFragment"
+            app:destination="@id/accountFragment" />
+        <action
+            android:id="@+id/action_myMembershipFragment_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+        <argument
+            android:name="user"
+            app:argType="com.keremkulac.movieapp.repository.model.User"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

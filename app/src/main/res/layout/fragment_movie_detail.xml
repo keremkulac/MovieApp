@@ -35,14 +35,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textColor="#BFFFFFFF"
         android:gravity="start"
-        android:textStyle="bold"
         android:inputType="textMultiLine"
         android:maxLines="2"
+        android:text="@string/genre"
+        android:textColor="#BFFFFFFF"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/movieImage"
         app:layout_constraintTop_toBottomOf="@+id/movieName"
-        tools:ignore="TextViewEdits" />
+        tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/movieReleaseDate"
@@ -97,7 +98,6 @@
         app:layout_constraintTop_toBottomOf="@+id/movieRate" />
 
     <TextView
-        android:textColor="#FFFFFF"
         android:id="@+id/movieName"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -108,13 +108,14 @@
         android:inputType="textMultiLine"
         android:maxLines="2"
         android:text="@string/movie_name"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/movieImage"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="TextViewEdits" />
+        tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/isChecked"

@@ -2,10 +2,7 @@ package com.keremkulac.movieapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -14,6 +11,7 @@ import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 
 class MovieAdapter(
+    private val clickListener : ClickListener,
     var popularMovieList : ArrayList<Movie>,
     ): RecyclerView.Adapter<MovieAdapter.PopularViewHolder>(){
 
@@ -22,6 +20,8 @@ class MovieAdapter(
             binding.movie =popularMovies
         }
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PopularViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -41,13 +41,11 @@ class MovieAdapter(
                 it, placeHolderProgressBar(holder.itemView.context))
         }
         holder.itemView.setOnClickListener {
-            val bundle = bundleOf("movie" to popularMovieList[position])
-            holder.itemView.findNavController().navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
+            clickListener.ClickedMovieItem(popularMovieList[position])
         }
     }
-    fun filterList(filterList: ArrayList<Movie>) {
-        popularMovieList.addAll(filterList)
-        notifyDataSetChanged()
+    interface ClickListener {
+        fun ClickedMovieItem(movie : Movie)
     }
 }
 

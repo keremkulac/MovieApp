@@ -2,19 +2,17 @@ package com.keremkulac.movieapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.ItemTvSeriesBinding
-import com.keremkulac.movieapp.repository.model.TvSeries
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 
 class TvSeriesAdapter(
-    var tvSeriesList : ArrayList<Movie>): RecyclerView.Adapter<TvSeriesAdapter.TvSeriesViewHolder>(){
+    private val clickListener : ClickListener,
+    private val tvSeriesList : ArrayList<Movie>): RecyclerView.Adapter<TvSeriesAdapter.TvSeriesViewHolder>(){
 
     class TvSeriesViewHolder (val binding : ItemTvSeriesBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(tvSeries: Movie){
@@ -44,12 +42,11 @@ class TvSeriesAdapter(
             }
         }
         holder.itemView.setOnClickListener {
-            val bundle = bundleOf("movie" to tvSeriesList[position])
-            holder.itemView.findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
+            clickListener.ClickedTvSeriesItem(tvSeriesList[position])
         }
     }
-    fun filterList(filterList: ArrayList<TvSeries>) {
-    //  tvSeriesList.addAll(filterList)
-    // notifyDataSetChanged()
+
+    interface ClickListener {
+        fun ClickedTvSeriesItem(movie : Movie)
     }
 }

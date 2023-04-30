@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginBottom="-40dp"
-                android:background="@drawable/latest_movie_gradient"
+                android:background="@drawable/movie_gradient"
                 app:layout_constraintBottom_toBottomOf="@+id/popularTvSeriesPoster"
                 app:layout_constraintEnd_toEndOf="parent" />
 
