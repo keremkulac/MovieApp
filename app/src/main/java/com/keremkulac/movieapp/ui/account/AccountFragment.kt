@@ -65,7 +65,8 @@ class AccountFragment : Fragment() {
 
     private fun myList(){
         binding.myList.setOnClickListener {
-            navController.navigate(R.id.action_accountFragment_to_myListFragment)
+            val bundle = bundleOf("user" to user)
+            navController.navigate(R.id.action_accountFragment_to_myListFragment,bundle)
         }
     }
 

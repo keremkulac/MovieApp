@@ -12,8 +12,8 @@ import com.keremkulac.movieapp.util.placeHolderProgressBar
 
 class MyListAdapter(
     private val clickListener : ClickListener,
-    val list : ArrayList<Movie>) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>(){
-
+    var list : ArrayList<Movie>) : RecyclerView.Adapter<MyListAdapter.MyListViewHolder>(){
+    val updatedList = ArrayList<Movie>()
     class MyListViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         val imageView = view.findViewById<ImageView>(R.id.myListMoviePoster)
     }

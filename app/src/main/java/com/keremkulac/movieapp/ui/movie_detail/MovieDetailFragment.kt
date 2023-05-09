@@ -1,5 +1,6 @@
 package com.keremkulac.movieapp.ui.movie_detail
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
@@ -7,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -23,9 +26,13 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private val viewModel  by viewModels<MovieDetailViewModel>()
     private var genres = ArrayList<Genre>()
     private var movie : Movie? = null
-    private var tvSeries : Movie? = null
+    private var myList : String? = null
+    private lateinit var navController: NavController
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieDetailBinding.inflate(inflater)
+        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
+        navController = navHostFragment.navController
         return binding.root
     }
 
@@ -80,16 +87,6 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
 
     private fun addMovie(){
         binding.addMovie.setOnClickListener {
-            if(tvSeries != null){
-                if(binding.isChecked.text.equals("false")){
-                    viewModel.add(tvSeries,requireContext())
-                    binding.addMovie.setImageResource(R.drawable.ic_check)
-                    binding.isChecked.text = getString(R.string.trueText)
-                }else if(binding.isChecked.text.equals("true")){
-                    tvSeries!!.id?.let { it1 -> viewModel.checkAndRemoveList(it1.toInt(),requireContext(),binding.addMovie) }
-                    binding.isChecked.text = getString(R.string.falseText)
-                }
-            }
 
             if(movie != null){
                 if(binding.isChecked.text == "false"){
@@ -97,7 +94,10 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
                     binding.addMovie.setImageResource(R.drawable.ic_check)
                     binding.isChecked.text = getString(R.string.trueText)
                 }else if(binding.isChecked.text == "true"){
-                    tvSeries!!.id?.let { it1 -> viewModel.checkAndRemoveList(it1.toInt(),requireContext(),binding.addMovie) }
+                    movie!!.id?.let {
+                            it1 -> viewModel.checkAndRemoveList(it1.toInt(),requireContext(),binding.addMovie)
+
+                    }
                     binding.isChecked.text = getString(R.string.falseText)
                 }
             }
@@ -115,4 +115,13 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
         }
     }
 
-}
+
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        myList = arguments?.getString("myList")
+        myList?.let {
+                navController.navigate(R.id.action_movieDetailFragment_to_myListFragment)
+            }
+        }
+    }

@@ -89,6 +89,9 @@
             android:name="movie"
             app:nullable="true"
             app:argType="com.keremkulac.movieapp.Movie" />
+        <action
+            android:id="@+id/action_movieDetailFragment_to_myListFragment"
+            app:destination="@id/myListFragment" />
     </dialog>
     <fragment
         android:id="@+id/myMembershipFragment"

@@ -22,7 +22,6 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
     private  val viewModel by viewModels<SearchViewModel>()
     private lateinit var searchAdapter : SearchAdapter
     private lateinit var genreAdapter : SearchGenreAdapter
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
         binding = FragmentSearchBinding.inflate(inflater)
         return binding.root
@@ -30,15 +29,11 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setSearchMenu()
-        viewModel.getPopularMovies()
-        viewModel.getTrendMovies()
-        viewModel.getTvSeriesGenres()
-        viewModel.getMovieGenres()
-        viewModel.getUpcomingMovies()
-        viewModel.getTopRatedTvSeries()
-        viewModel.getPopularTvSeries()
+       setSearchMenu()
+        viewModel.getData()
+
     }
+
 
    private fun createMovieRecyclerView(list : ArrayList<Movie>){
        searchAdapter = SearchAdapter(this,list)
@@ -66,6 +61,7 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
         binding.searchView.setOnCloseListener {
             viewModel.clearList()
             binding.movieGenresRecyclerView.visibility = View.INVISIBLE
+            binding.movieNotFound.visibility = View.INVISIBLE
             false
         }
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{

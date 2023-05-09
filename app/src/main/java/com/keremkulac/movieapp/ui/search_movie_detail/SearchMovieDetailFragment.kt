@@ -35,7 +35,7 @@ class SearchMovieDetailFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindMovieItem()
-        back()
+        backToSearchFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +100,7 @@ class SearchMovieDetailFragment : Fragment(){
         }
     }
 
-    private fun back(){
+    private fun backToSearchFragment(){
         binding.movieDetailBackButton.setOnClickListener {
             navController.navigate(R.id.action_searchMovieDetailFragment_to_searchFragment)
         }

@@ -20,17 +20,17 @@ import kotlin.collections.HashMap
 class SearchViewModel
 @Inject constructor(private val movieRepositoryImp: MovieRepositoryImp ): ViewModel(){
     val movieFoundError = MutableLiveData<Boolean>()
-    var popularMovies = MutableLiveData<ArrayList<Movie>>()
-    var trendMovies = MutableLiveData<ArrayList<Movie>>()
-    var upcomingMovies = MutableLiveData<ArrayList<Movie>>()
-    var movieGenres = MutableLiveData<ArrayList<Genre>>()
-    var tvSeriesGenres = MutableLiveData<ArrayList<Genre>>()
+    private val popularMovies = MutableLiveData<ArrayList<Movie>>()
+    private val trendMovies = MutableLiveData<ArrayList<Movie>>()
+    private val upcomingMovies = MutableLiveData<ArrayList<Movie>>()
+    private val topRatedTvSeries = MutableLiveData<ArrayList<Movie>>()
+    private val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
+    private var movieGenres = MutableLiveData<ArrayList<Genre>>()
+    private var tvSeriesGenres = MutableLiveData<ArrayList<Genre>>()
     private val sameMovies = ArrayList<Movie>()
     private val sameTvSeries = ArrayList<Movie>()
-    val topRatedTvSeries = MutableLiveData<ArrayList<Movie>>()
-    val popularTvSeries = MutableLiveData<ArrayList<Movie>>()
-    private  var combinedMovieList : ArrayList<Movie>
-    private  var combinedTvSeriesList : ArrayList<Movie>
+    private  var combinedMovieList = ArrayList<Movie>()
+    private  var combinedTvSeriesList = ArrayList<Movie>()
     private  var actionList = ArrayList<Movie>()
     private  var adventureList = ArrayList<Movie>()
     private  var animationList  = ArrayList<Movie>()
@@ -60,12 +60,15 @@ class SearchViewModel
     private var actionAndAdventureList = ArrayList<Movie>()
     private var allGenres = ArrayList<Genre>()
     var allMovieListHm = HashMap<String,ArrayList<Movie>>()
-    var genreWithSize = MutableLiveData<java.util.ArrayList<String>>()
+    var genreWithSize = MutableLiveData<ArrayList<String>>()
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         throwable.localizedMessage?.let { Log.d("TAG", it) }
     }
     init {
 
+    }
+
+    fun getData(){
         getPopularMovies()
         getTrendMovies()
         getTvSeriesGenres()
@@ -73,11 +76,9 @@ class SearchViewModel
         getUpcomingMovies()
         getTopRatedTvSeries()
         getPopularTvSeries()
-        combinedMovieList = ArrayList()
-        combinedTvSeriesList = ArrayList()
     }
 
-     fun getPopularMovies(){
+     private fun getPopularMovies(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getPopularMovies()
             if(result.isSuccessful){
@@ -88,7 +89,7 @@ class SearchViewModel
         }
     }
 
-     fun getTrendMovies(){
+    private fun getTrendMovies(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTrendMovies()
             if(result.isSuccessful){
@@ -98,7 +99,7 @@ class SearchViewModel
             }
         }
     }
-     fun getUpcomingMovies(){
+    private fun getUpcomingMovies(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getUpcomingMovies()
             if(result.isSuccessful){
@@ -109,7 +110,7 @@ class SearchViewModel
         }
     }
 
-     fun getMovieGenres(){
+     private fun getMovieGenres(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getMovieGenre()
             if(result.isSuccessful){
@@ -120,7 +121,7 @@ class SearchViewModel
         }
     }
 
-     fun getTvSeriesGenres(){
+    private fun getTvSeriesGenres(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTvSeriesGenre()
             if(result.isSuccessful){
@@ -131,7 +132,7 @@ class SearchViewModel
         }
     }
 
-     fun getPopularTvSeries(){
+    private fun getPopularTvSeries(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTvPopular()
             if(result.isSuccessful){
@@ -142,7 +143,7 @@ class SearchViewModel
         }
     }
 
-     fun getTopRatedTvSeries(){
+    private fun getTopRatedTvSeries(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTopRated()
             if(result.isSuccessful){
@@ -326,6 +327,7 @@ class SearchViewModel
         for (genre in getNames()) {
            allMovieListHm[genre]!!.clear()
         }
+        allMovieListHm["All"]!!.clear()
     }
 
     private fun getGenreNames(){

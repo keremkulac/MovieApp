@@ -7,9 +7,6 @@ import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.keremkulac.movieapp.databinding.ActivityMainBinding
 import com.keremkulac.movieapp.repository.model.User
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,7 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
-    private lateinit var auth : FirebaseAuth
     private lateinit var navController: NavController
     private val viewModel by viewModels<MainActivityViewModel>()
     private var user : User? = null
@@ -25,7 +21,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        auth = Firebase.auth
         bottomNavMenuSelect()
         selectMovie()
         selectTVSeries()
@@ -55,16 +50,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun selectTVSeries(){
         binding.selectTVSeries.setOnClickListener {
-            binding.selectedMovie.visibility = View.INVISIBLE
-            binding.selectedTV.visibility = View.VISIBLE
-            navController.navigate(R.id.action_movieFragment_to_tvSeriesFragment)
+            if (binding.selectedTV.visibility != View.VISIBLE && binding.selectedMovie.visibility == View.VISIBLE   ) {
+                binding.selectedMovie.visibility = View.INVISIBLE
+                binding.selectedTV.visibility = View.VISIBLE
+                navController.navigate(R.id.action_movieFragment_to_tvSeriesFragment)
+            }
         }
     }
     private fun selectMovie(){
-        binding.selectMovie.setOnClickListener {
-            binding.selectedMovie.visibility = View.VISIBLE
-            binding.selectedTV.visibility = View.INVISIBLE
-            navController.navigate(R.id.action_tvSeriesFragment_to_movieFragment)
+            binding.selectMovie.setOnClickListener {
+                if (binding.selectedMovie.visibility != View.VISIBLE && binding.selectedTV.visibility == View.VISIBLE   ) {
+                    binding.selectedMovie.visibility = View.VISIBLE
+                    binding.selectedTV.visibility = View.INVISIBLE
+                    navController.navigate(R.id.action_tvSeriesFragment_to_movieFragment)
+            }
         }
     }
 

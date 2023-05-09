@@ -8,9 +8,9 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.repository.model.Genre
@@ -25,13 +25,18 @@ import java.text.DecimalFormat
 import javax.inject.Inject
 @HiltViewModel
 class MovieDetailViewModel
-@Inject constructor(private val movieRepositoryImp: MovieRepositoryImp ): ViewModel() {
+@Inject constructor(
+    private val movieRepositoryImp: MovieRepositoryImp,
+    private val auth: FirebaseAuth,
+    private val fireStore: FirebaseFirestore): ViewModel() {
     var movieGenres = MutableLiveData<ArrayList<Genre>?>()
     var tvSeriesGenres = MutableLiveData<ArrayList<Genre>?>()
-    val myList = MutableLiveData<ArrayList<QueryDocumentSnapshot>>()
+    val myList = MutableLiveData<ArrayList<Movie>>()
+    private val myList1 = ArrayList<Movie>()
     val list = ArrayList<QueryDocumentSnapshot>()
     var idList = MutableLiveData<ArrayList<String>>()
     private val id = ArrayList<String>()
+    private var user : FirebaseUser? = null
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         throwable.localizedMessage?.let { Log.d("TAG", it) }
     }
@@ -73,22 +78,20 @@ class MovieDetailViewModel
         df.roundingMode = RoundingMode.DOWN
         return df.format(float).toString()
     }
-    private fun getMyList(){
-        val db = Firebase.firestore
-        val user = FirebaseAuth.getInstance().currentUser
-
-        db.collection("MyList")
+     fun getMyList(){
+        user = auth.currentUser
+        fireStore.collection("MyList")
             .whereEqualTo("email",user!!.email.toString() )
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    list.add(document)
+                    val movie: Movie = document.toObject(Movie::class.java)
+                    myList1.add(movie)
                     id.add(document.data["id"].toString())
 
                 }
-                myList.value = list
+                myList.value = myList1
                 idList.value = id
-
             }
             .addOnFailureListener { exception ->
                 Log.w(ContentValues.TAG, "Error getting documents: ", exception)
@@ -96,13 +99,12 @@ class MovieDetailViewModel
     }
 
      fun add(movie: Movie?,context : Context){
-        val db = Firebase.firestore
-        val user = FirebaseAuth.getInstance().currentUser
+         user = auth.currentUser
         user.let {
             movie.let {
                 movie!!.email = user!!.email
                 movie.isChecked = true
-                db.collection("MyList")
+                fireStore.collection("MyList")
                     .add(movie)
                     .addOnSuccessListener { Toast.makeText(context,"Added to your movie list",
                         Toast.LENGTH_SHORT).show()                    }
@@ -116,9 +118,8 @@ class MovieDetailViewModel
     }
 
      fun checkAndRemoveList(id : Int,context: Context,imageView: ImageView){
-        val db = Firebase.firestore
-        val user = FirebaseAuth.getInstance().currentUser
-        db.collection("MyList")
+         user = auth.currentUser
+        fireStore.collection("MyList")
             .whereEqualTo("email",user!!.email.toString() )
             .whereEqualTo("id",id)
             .get()
@@ -136,8 +137,7 @@ class MovieDetailViewModel
     }
 
     private fun deleteMovieToList(documentID : String,context: Context){
-        val db = Firebase.firestore
-        db.collection("MyList")
+        fireStore.collection("MyList")
             .document(documentID)
             .delete()
             .addOnCompleteListener {
@@ -146,7 +146,5 @@ class MovieDetailViewModel
                 }
             }
     }
-
-
 
 }
