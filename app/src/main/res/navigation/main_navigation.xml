@@ -75,11 +75,6 @@
         android:id="@+id/loginActivity"
         android:name="com.keremkulac.movieapp.ui.login.LoginActivity"
         android:label="LoginActivity" />
-    <activity
-        android:id="@+id/searchActivity"
-        android:name="com.keremkulac.movieapp.ui.search.SearchActivity"
-        android:label="activity_search"
-        tools:layout="@layout/activity_search" />
     <dialog
         android:id="@+id/movieDetailFragment"
         android:name="com.keremkulac.movieapp.ui.movie_detail.MovieDetailFragment"
@@ -109,5 +104,22 @@
             app:argType="com.keremkulac.movieapp.repository.model.User"
             app:nullable="true"
             android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.keremkulac.movieapp.ui.search.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_searchMovieDetailFragment"
+            app:destination="@id/searchMovieDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchMovieDetailFragment"
+        android:name="com.keremkulac.movieapp.ui.search_movie_detail.SearchMovieDetailFragment"
+        android:label="fragment_search_movie_detail"
+        tools:layout="@layout/fragment_search_movie_detail" >
+        <action
+            android:id="@+id/action_searchMovieDetailFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
 </navigation>

@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -28,13 +26,10 @@ class TvSeriesFragment : Fragment(), TvSeriesAdapter.ClickListener {
     private lateinit var topRatedAdapter : TvSeriesAdapter
     private  var popularTvSeries : Movie? = null
     private var randomNumber : Int = 0
-    private lateinit var navController: NavController
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTvSeriesBinding.inflate(inflater)
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
-        navController = navHostFragment.navController
         return binding.root
     }
 
@@ -82,12 +77,12 @@ class TvSeriesFragment : Fragment(), TvSeriesAdapter.ClickListener {
     private fun popularPosterClick(){
             binding.popularTvSeriesPoster.setOnClickListener {
                 val bundle = bundleOf("movie" to popularTvSeries)
-                it.findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
+                findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
                 }
             }
 
     override fun ClickedTvSeriesItem(movie: Movie) {
         val bundle = bundleOf("movie" to movie)
-        navController.navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
+        findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
     }
 }

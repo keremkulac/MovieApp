@@ -9,8 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentMyMembershipBinding
 import com.keremkulac.movieapp.repository.model.User
@@ -20,15 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class MyMembershipFragment : Fragment() {
 
     private lateinit var binding : FragmentMyMembershipBinding
-    private lateinit var navController : NavController
     private var user : User? = null
     private  val viewModel by viewModels<MyMembershipViewModel>()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMyMembershipBinding.inflate(inflater)
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
-        navController = navHostFragment.navController
         membershipToChangePassword()
         backToAccount()
         return binding.root
@@ -50,7 +46,7 @@ class MyMembershipFragment : Fragment() {
     private fun membershipToChangePassword(){
         binding.changePassword.setOnClickListener {
             val bundle = bundleOf("user" to user)
-            navController.navigate(R.id.action_myMembershipFragment_to_changePasswordFragment,bundle)
+            findNavController().navigate(R.id.action_myMembershipFragment_to_changePasswordFragment,bundle)
         }
     }
 
@@ -79,8 +75,8 @@ class MyMembershipFragment : Fragment() {
                     .setPositiveButton("Yes") { dialog, id ->
                         viewModel.updateFullname(updatedUserFullname)
                         val userList = updatedUserFullname.split(" ")
-                        user!!.firstname = userList[0]
-                        user!!.lastname = userList[1]
+                        user!!.firstname = userList[0].capitalize()
+                        user!!.lastname = userList[1].capitalize()
                         navigateAccountFragment(user)
                     }
                     .setNegativeButton("Cancel") { dialog, id ->
@@ -97,7 +93,7 @@ class MyMembershipFragment : Fragment() {
 
     private fun navigateAccountFragment(user : User?){
         val bundle = bundleOf("user" to user)
-        navController.navigate(R.id.action_myMembershipFragment_to_accountFragment,bundle)
+        findNavController().navigate(R.id.action_myMembershipFragment_to_accountFragment,bundle)
     }
 
 }

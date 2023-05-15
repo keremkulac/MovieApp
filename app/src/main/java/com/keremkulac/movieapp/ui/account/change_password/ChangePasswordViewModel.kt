@@ -1,6 +1,7 @@
 package com.keremkulac.movieapp.ui.account.change_password
 
 import android.content.Context
+import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -14,7 +15,7 @@ import javax.inject.Inject
 class ChangePasswordViewModel
 @Inject constructor(private val auth : FirebaseAuth) : ViewModel(){
 
-    fun changePassword(oldPass : String,newPass1 : String,context: Context,navController: NavController){
+    fun changePassword(oldPass : String,newPass1 : String,context: Context,navController: NavController,bundle: Bundle){
         val user = auth.currentUser
         user?.let {
             if(user.email == null || user.email.equals("")){
@@ -25,7 +26,7 @@ class ChangePasswordViewModel
                 user.reauthenticate(credential).addOnSuccessListener {
                     user.updatePassword(newPass1).addOnSuccessListener {
                         Toast.makeText(context,"Password updated", Toast.LENGTH_SHORT).show()
-                        navController.navigate(R.id.action_changePasswordFragment_to_myMembershipFragment)
+                        navController.navigate(R.id.action_changePasswordFragment_to_myMembershipFragment,bundle)
                     }.addOnFailureListener {
                         Toast.makeText(context, it.localizedMessage!!.toString(), Toast.LENGTH_SHORT).show()
                     }

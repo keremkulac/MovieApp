@@ -1,12 +1,13 @@
 package com.keremkulac.movieapp.ui.search
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -39,14 +40,13 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
        searchAdapter = SearchAdapter(this,list)
        binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
        binding.searchRecyclerView.adapter = searchAdapter
-
    }
+
     private fun createGenreRecyclerView(list : ArrayList<String>, genreWithSizeList : ArrayList<String>){
         genreAdapter = SearchGenreAdapter(this,list,genreWithSizeList)
         binding.movieGenresRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         binding.movieGenresRecyclerView.adapter = genreAdapter
     }
-
 
     private fun setSearchMenu(){
         binding.searchView.setOnSearchClickListener {
@@ -98,6 +98,6 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
 
     override fun ClickedMovieItem(movie: Movie) {
         val bundle = bundleOf("movie" to movie)
-        binding.root.findNavController().navigate(R.id.action_searchFragment_to_searchMovieDetailFragment,bundle)
+        findNavController().navigate(R.id.action_searchFragment_to_searchMovieDetailFragment,bundle)
     }
 }

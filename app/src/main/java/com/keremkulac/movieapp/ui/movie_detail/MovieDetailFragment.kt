@@ -7,14 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentMovieDetailBinding
 import com.keremkulac.movieapp.repository.model.Genre
+import com.keremkulac.movieapp.repository.model.User
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,12 +28,10 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
     private var genres = ArrayList<Genre>()
     private var movie : Movie? = null
     private var myList : String? = null
-    private lateinit var navController: NavController
+    private var user : User? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieDetailBinding.inflate(inflater)
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
-        navController = navHostFragment.navController
         return binding.root
     }
 
@@ -40,6 +39,7 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
       getMovie()
         addMovie()
+        user = arguments?.getSerializable("user") as User?
     }
 
 
@@ -121,7 +121,8 @@ class MovieDetailFragment : BottomSheetDialogFragment() {
         super.onCancel(dialog)
         myList = arguments?.getString("myList")
         myList?.let {
-                navController.navigate(R.id.action_movieDetailFragment_to_myListFragment)
+            val bundle = bundleOf("user" to user)
+            findNavController().navigate(R.id.action_movieDetailFragment_to_myListFragment,bundle)
             }
         }
     }

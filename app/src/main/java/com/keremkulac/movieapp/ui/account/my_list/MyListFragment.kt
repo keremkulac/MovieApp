@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -23,13 +22,10 @@ class MyListFragment : Fragment(),MyListAdapter.ClickListener {
     private lateinit var binding : FragmentMyListBinding
     private val viewModel by viewModels<MyListViewModel>()
     private lateinit var adapter : MyListAdapter
-    private lateinit var navController: NavController
 
     private var user : User? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMyListBinding.inflate(inflater)
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
-        navController = navHostFragment.navController
         return binding.root
     }
 
@@ -55,12 +51,12 @@ class MyListFragment : Fragment(),MyListAdapter.ClickListener {
     private fun backToAccount(){
         binding.myListToAccount.setOnClickListener {
             val bundle = bundleOf("user" to user)
-            navController.navigate(R.id.action_myListFragment_to_accountFragment,bundle)
+            findNavController().navigate(R.id.action_myListFragment_to_accountFragment,bundle)
         }
     }
 
     override fun ClickedMyListItem(movie: Movie) {
-        val bundle = bundleOf("movie" to movie,"myList" to "myList")
-        navController.navigate(R.id.action_myListFragment_to_movieDetailFragment,bundle)
+        val bundle = bundleOf("movie" to movie,"myList" to "myList","user" to user)
+        findNavController().navigate(R.id.action_myListFragment_to_movieDetailFragment,bundle)
     }
 }

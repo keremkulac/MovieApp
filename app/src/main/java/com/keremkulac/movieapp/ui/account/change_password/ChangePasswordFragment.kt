@@ -8,8 +8,7 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentChangePasswordBinding
 import com.keremkulac.movieapp.repository.model.User
@@ -19,7 +18,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class ChangePasswordFragment : Fragment() {
 
     private lateinit var binding : FragmentChangePasswordBinding
-    private lateinit var navController : NavController
     private val viewModel by viewModels<ChangePasswordViewModel>()
     private var user : User? = null
 
@@ -27,16 +25,18 @@ class ChangePasswordFragment : Fragment() {
         binding = FragmentChangePasswordBinding.inflate(inflater)
         changePasswordToMembership()
         changePassword()
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
-        navController = navHostFragment.navController
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        user = arguments?.getSerializable("user") as User?
     }
 
     private fun changePasswordToMembership(){
         binding.changePasswordToAccount.setOnClickListener {
-            user = arguments?.getSerializable("user") as User?
             val bundle = bundleOf("user" to user)
-            navController.navigate(R.id.action_changePasswordFragment_to_myMembershipFragment,bundle)
+            findNavController().navigate(R.id.action_changePasswordFragment_to_myMembershipFragment,bundle)
         }
     }
 
@@ -48,7 +48,8 @@ class ChangePasswordFragment : Fragment() {
             if(oldPass == "" ||  newPass1 == "" || newPass2 == ""){
                 Toast.makeText(requireContext(),"Please enter all information completely",Toast.LENGTH_SHORT).show()
             }else{
-                viewModel.changePassword(oldPass,newPass1,requireContext(),navController)
+                val bundle = bundleOf("user" to user)
+                viewModel.changePassword(oldPass,newPass1,requireContext(),findNavController(),bundle)
             }
         }
     }

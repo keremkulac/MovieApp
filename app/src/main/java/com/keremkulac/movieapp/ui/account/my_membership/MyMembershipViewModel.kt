@@ -15,8 +15,8 @@ class MyMembershipViewModel
         auth?.let {
              userEmail = auth.currentUser?.email
         }
-        userEmail?.let { it1 ->
-            db.collection("Users").document(it1).update(
+        userEmail?.let { email ->
+            db.collection("Users").document(email).update(
                 "userFirstname", user[0].capitalize(),
                 "userLastname",user[1].capitalize())
         }

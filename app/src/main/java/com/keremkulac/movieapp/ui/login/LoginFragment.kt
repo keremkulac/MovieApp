@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,12 +16,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private lateinit var binding : FragmentLoginBinding
-    private lateinit var navController : NavController
     private val viewModel by viewModels<LoginViewModel>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentLoginBinding.inflate(inflater)
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
         signIn()
         return binding.root
     }
@@ -30,14 +26,14 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         switchRegisterFragment()
-        viewModel.loggedUser(navController)
+        viewModel.loggedUser(findNavController())
 
     }
 
     private fun switchRegisterFragment(){
         binding.loginSignUpNow.setOnClickListener {
             binding.loginSignUpNow.setBackgroundResource(R.color.white2)
-            navController.navigate(R.id.action_loginFragment_to_registerFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
     }
 
@@ -50,7 +46,7 @@ class LoginFragment : Fragment() {
                 Toast.makeText(requireContext(),"Please enter all information completely", Toast.LENGTH_SHORT).show()
 
             }else{
-               viewModel.signIn(email,password,navController,requireContext())
+               viewModel.signIn(email,password,findNavController(),requireContext())
             }
         }
 

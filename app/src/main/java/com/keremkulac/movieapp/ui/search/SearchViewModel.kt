@@ -58,7 +58,7 @@ class SearchViewModel
     private var talkList = ArrayList<Movie>()
     private var warAndPoliticsList = ArrayList<Movie>()
     private var actionAndAdventureList = ArrayList<Movie>()
-    private var allGenres = ArrayList<Genre>()
+    private var combinedGenreList = ArrayList<Genre>()
     var allMovieListHm = HashMap<String,ArrayList<Movie>>()
     var genreWithSize = MutableLiveData<ArrayList<String>>()
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
@@ -156,20 +156,23 @@ class SearchViewModel
 
 
     fun combineMovies(){
-        findSameMovies(trendMovies.value!!,popularMovies.value!!)
-        findSameMovies(trendMovies.value!!,upcomingMovies.value!!)
-        findSameMovies(upcomingMovies.value!!,popularMovies.value!!)
-        findSameTvSeries(topRatedTvSeries.value!!,popularTvSeries.value!!)
-        deleteSameMovies()
-        deleteSameTvSeries()
-        movieGenreCount(combinedMovieList)
+        findSameMovies(trendMovies.value!!,popularMovies.value!!,"movie")
+        findSameMovies(trendMovies.value!!,upcomingMovies.value!!,"movie")
+        findSameMovies(upcomingMovies.value!!,popularMovies.value!!,"movie")
+        findSameMovies(topRatedTvSeries.value!!,popularTvSeries.value!!,"tvSeries")
+        combinedTvSeriesList.addAll(deleteSameMovies(popularTvSeries.value!!,sameTvSeries))
+        combinedTvSeriesList.addAll(topRatedTvSeries.value!!)
+        combinedMovieList.addAll(deleteSameMovies(trendMovies.value!!,sameMovies))
+        combinedMovieList.addAll(deleteSameMovies(popularMovies.value!!,sameMovies))
+        combinedMovieList.addAll(upcomingMovies.value!!)
+        movieGenreCount()
         tvSeriesGenreCount()
         getGenreNames()
     }
 
 
-   private fun movieGenreCount(allMovieList : ArrayList<Movie>){
-        for (movie in allMovieList){
+   private fun movieGenreCount(){
+        for (movie in combinedMovieList){
             movie.genre_ids.let {
                 for (movieID in movie.genre_ids!!){
                     when(movieID){
@@ -221,7 +224,7 @@ class SearchViewModel
                }
            }
        }
-        val allList = allMovieList+ combinedTvSeriesList
+        val allList = combinedMovieList + combinedTvSeriesList
        allMovieListHm["All"] = allList as ArrayList<Movie>
        allMovieListHm["Action"] = actionList
        allMovieListHm["Action & Adventure"] = actionAndAdventureList
@@ -267,6 +270,92 @@ class SearchViewModel
             }
         }
     }
+
+    fun getNames() : ArrayList<String>{
+        val genreNames = ArrayList<String>()
+        val sizeList = ArrayList<String>()
+        var size : String
+        for(genre in combinedGenreList){
+            genre.name?.let { genreNames.add(it) }
+            if(allMovieListHm[genre.name] != null){
+                size = allMovieListHm[genre.name]!!.size.toString()
+                sizeList.add(genre.name+"(${size})")
+            }
+        }
+        sizeList.sortBy {
+            it
+        }
+        val list = ArrayList<String>()
+        size = allMovieListHm["All"]!!.size.toString()
+        list.add("All"+"(${size})")
+        val list1 = list+sizeList
+        genreWithSize.value = list1 as ArrayList<String>
+        return genreNames
+    }
+
+
+    fun getGenre() : HashMap<String,ArrayList<Movie>>{
+        return allMovieListHm
+    }
+    fun clearList(){
+        for (genre in getNames()) {
+           allMovieListHm[genre]!!.clear()
+        }
+        allMovieListHm["All"]!!.clear()
+    }
+
+    private fun getGenreNames(){
+        val sameGenres = ArrayList<Genre>()
+        val deletedList = mutableListOf<Genre>()
+        deletedList.addAll(movieGenres.value!!)
+        for (i in movieGenres.value!!){
+            for(x in tvSeriesGenres.value!!){
+                if(i.id == x.id){
+                    sameGenres.add(i)
+                }
+            }
+        }
+        for (genre in movieGenres.value!!){
+            for (sameGenre in sameGenres.indices){
+                if(genre.id == sameGenres[sameGenre].id){
+                    deletedList.remove(genre)
+                }
+            }
+        }
+        combinedGenreList.addAll(deletedList)
+        combinedGenreList.addAll(tvSeriesGenres.value!!)
+    }
+    private fun findSameMovies(list1: ArrayList<Movie>,list2: ArrayList<Movie>,isMovie : String){
+        for (list1Item in list1) {
+            for (list2Item in list2) {
+                list2Item.id.let {
+                    list1Item.id.let {
+                        if (list2Item.id == list1Item.id) {
+                            if(isMovie == "movie"){
+                                sameMovies.add(list2Item)
+                            }else{
+                                sameTvSeries.add(list2Item)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+   private fun deleteSameMovies(list : ArrayList<Movie>,sameList : ArrayList<Movie>) : ArrayList<Movie>{
+        val deletedList = mutableListOf<Movie>()
+            deletedList.addAll(list)
+            for (listItem in list){
+                for (same in sameList.indices){
+                    if(listItem.id == sameList[same].id){
+                        deletedList.remove(listItem)
+                    }
+                }
+            }
+            return deletedList as ArrayList<Movie>
+   }
+
     fun filter(text: String?,adapter : SearchAdapter){
         val allList = combinedMovieList + combinedTvSeriesList
         val filteredList: ArrayList<Movie> = ArrayList()
@@ -292,128 +381,6 @@ class SearchViewModel
         } else {
             adapter.filterList(filteredList)
             movieFoundError.value = false
-        }
-    }
-
-    fun getNames() : ArrayList<String>{
-        val genreNames = ArrayList<String>()
-        val sizeList = ArrayList<String>()
-        var size : String
-        for(genre in allGenres){
-            genre.name?.let { genreNames.add(it) }
-            if(allMovieListHm[genre.name] != null){
-                size = allMovieListHm[genre.name]!!.size.toString()
-                sizeList.add(genre.name+"(${size})")
-            }
-        }
-
-
-        sizeList.sortBy {
-            it
-        }
-        val list = ArrayList<String>()
-        size = allMovieListHm["All"]!!.size.toString()
-        list.add("All"+"(${size})")
-        val list1 = list+sizeList
-        genreWithSize.value = list1 as ArrayList<String>
-        return genreNames
-    }
-
-
-    fun getGenre() : HashMap<String,ArrayList<Movie>>{
-        return allMovieListHm
-    }
-    fun clearList(){
-        for (genre in getNames()) {
-           allMovieListHm[genre]!!.clear()
-        }
-        allMovieListHm["All"]!!.clear()
-    }
-
-    private fun getGenreNames(){
-        val sameGenres = mutableListOf<Genre>()
-        val deletedList = mutableListOf<Genre>()
-        deletedList.addAll(movieGenres.value!!)
-        for (i in movieGenres.value!!){
-            for(x in tvSeriesGenres.value!!){
-                if(i.id == x.id){
-                    sameGenres.add(i)
-                }
-            }
-        }
-        for (genre in movieGenres.value!!){
-            for (sameGenre in sameGenres.indices){
-                if(genre.id == sameGenres[sameGenre].id){
-                    deletedList.remove(genre)
-                }
-            }
-        }
-        allGenres.addAll(deletedList)
-        allGenres.addAll(tvSeriesGenres.value!!)
-    }
-    private fun findSameMovies(list1: ArrayList<Movie>,list2: ArrayList<Movie>){
-        for (list1Item in list1) {
-            for (list2Item in list2) {
-                list2Item.id.let {
-                    list1Item.id.let {
-                        if (list2Item.id == list1Item.id) {
-                            sameMovies.add(list2Item)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun deleteSameMovies(){
-        val deletedList = mutableListOf<Movie>()
-        deletedList.addAll(trendMovies.value!!)
-        for (movie in trendMovies.value!!){
-            for (sameMovie in sameMovies.indices){
-                if(movie.id == sameMovies[sameMovie].id){
-                    deletedList.remove(movie)
-                }
-            }
-        }
-        val deletedList1 = mutableListOf<Movie>()
-        deletedList1.addAll(popularMovies.value!!)
-        for (movie in popularMovies.value!!){
-            for (sameMovie in sameMovies.indices){
-                if(movie.id == sameMovies[sameMovie].id){
-                    deletedList1.remove(movie)
-                }
-            }
-        }
-        combinedMovieList.addAll(deletedList)
-        combinedMovieList.addAll(deletedList1)
-        combinedMovieList.addAll(upcomingMovies.value!!)
-    }
-
-    private fun deleteSameTvSeries(){
-        val deletedList = mutableListOf<Movie>()
-        deletedList.addAll(popularTvSeries.value!!)
-        for (tvSeries in popularTvSeries.value!!){
-            for (same in sameTvSeries.indices){
-                if(tvSeries.id == sameTvSeries[same].id){
-                    deletedList.remove(tvSeries)
-                }
-            }
-        }
-        combinedTvSeriesList.addAll(deletedList)
-        combinedTvSeriesList.addAll(topRatedTvSeries.value!!)
-    }
-
-    private fun findSameTvSeries(list1: ArrayList<Movie>,list2: ArrayList<Movie>){
-        for (list1Item in list1) {
-            for (list2Item in list2) {
-                list2Item.id.let {
-                    list1Item.id.let {
-                        if (list2Item.id == list1Item.id) {
-                            sameTvSeries.add(list2Item)
-                        }
-                    }
-                }
-            }
         }
     }
 }

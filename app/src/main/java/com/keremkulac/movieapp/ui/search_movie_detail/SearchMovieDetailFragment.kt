@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentSearchMovieDetailBinding
+import com.keremkulac.movieapp.repository.model.User
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,19 +23,18 @@ class SearchMovieDetailFragment : Fragment(){
 
     private lateinit var binding : FragmentSearchMovieDetailBinding
     private  val viewModel by viewModels<SearchMovieDetailViewModel>()
-    private lateinit var navController: NavController
+    private var user : User? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchMovieDetailBinding.inflate(inflater)
-        val navHostFragment =requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment3) as NavHostFragment
-        navController = navHostFragment.navController
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindMovieItem()
+        user = arguments?.getSerializable("user") as User?
         backToSearchFragment()
     }
 
@@ -102,7 +102,8 @@ class SearchMovieDetailFragment : Fragment(){
 
     private fun backToSearchFragment(){
         binding.movieDetailBackButton.setOnClickListener {
-            navController.navigate(R.id.action_searchMovieDetailFragment_to_searchFragment)
+            val bundle = bundleOf("user" to user)
+            findNavController().navigate(R.id.action_searchMovieDetailFragment_to_searchFragment,bundle)
         }
     }
 

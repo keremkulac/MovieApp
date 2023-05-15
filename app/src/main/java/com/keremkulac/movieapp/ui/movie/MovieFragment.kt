@@ -5,8 +5,7 @@ import android.view.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
@@ -26,13 +25,10 @@ class MovieFragment : Fragment(),MovieAdapter.ClickListener {
     private  val viewModel by viewModels<MovieViewModel>()
     private  var popularMovie : Movie? = null
     private var randomNumber : Int = 0
-    private lateinit var navController : NavController
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMovieBinding.inflate(inflater)
-        val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment2) as NavHostFragment
-        navController = navHostFragment.navController
       return binding.root
 
     }
@@ -89,12 +85,13 @@ class MovieFragment : Fragment(),MovieAdapter.ClickListener {
     private fun popularPosterClick(){
         binding.popularMoviePoster.setOnClickListener {
             val bundle = bundleOf("movie" to popularMovie)
-            navController.navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
+            findNavController().navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
         }
     }
 
     override fun ClickedMovieItem(movie: Movie) {
            val bundle = bundleOf("movie" to movie)
-        navController.navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
+        findNavController().navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
+
     }
 }
