@@ -48,21 +48,19 @@ class MovieDetailViewModel
     private fun getMovieGenres(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getMovieGenre()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    movieGenres.postValue(it.genres)
-                }
+            result.data?.let {
+                movieGenres.postValue(it.genres)
             }
         }
+
     }
+
 
     private fun getTvSeriesGenres(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTvSeriesGenre()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    tvSeriesGenres.postValue(it.genres)
-                }
+            result.data?.let {
+                tvSeriesGenres.postValue(it.genres)
             }
         }
     }

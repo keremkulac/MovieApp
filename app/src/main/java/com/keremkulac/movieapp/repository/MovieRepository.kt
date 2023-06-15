@@ -4,6 +4,7 @@ import com.keremkulac.movieapp.LatestMovie
 import com.keremkulac.movieapp.MovieResult
 import com.keremkulac.movieapp.repository.model.Genres
 import com.keremkulac.movieapp.repository.model.LatestTvSeries
+import com.keremkulac.movieapp.util.Resource
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

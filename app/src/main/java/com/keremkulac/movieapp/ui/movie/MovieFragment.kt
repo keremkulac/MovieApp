@@ -14,72 +14,77 @@ import com.keremkulac.movieapp.databinding.FragmentMovieBinding
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MovieFragment : Fragment(),MovieAdapter.ClickListener {
+class MovieFragment @Inject constructor(
+    private val popularAdapter: MovieAdapter,
+    private val trendAdapter: MovieAdapter,
+    private val upcomingAdapter: MovieAdapter): Fragment(R.layout.fragment_movie) {
 
-    private lateinit var binding : FragmentMovieBinding
-    private lateinit var trendAdapter : MovieAdapter
-    private lateinit var popularAdapter : MovieAdapter
-    private lateinit var upcomingAdapter : MovieAdapter
+    private lateinit  var binding : FragmentMovieBinding
     private  val viewModel by viewModels<MovieViewModel>()
     private  var popularMovie : Movie? = null
     private var randomNumber : Int = 0
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMovieBinding.inflate(inflater)
-      return binding.root
-
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentMovieBinding.bind(view)
         observeLiveData()
         popularPosterClick()
     }
 
-    private fun observeLiveData(){
-        viewModel.popularMovies.observe(viewLifecycleOwner) { popularList ->
-            popularAdapter = MovieAdapter(this,popularList)
-            binding.popularMovieRecyclerView.layoutManager = LinearLayoutManager(
-                requireContext(),
-                LinearLayoutManager.HORIZONTAL, false
-            )
-            binding.popularMovieRecyclerView.setHasFixedSize(true)
-            binding.popularMovieRecyclerView.adapter = popularAdapter
-            randomNumber = kotlin.random.Random.nextInt(0, popularList.size)
-            popularMovie = popularList[randomNumber]
-            popularMovie?.let {
-                if (popularMovie!!.backdrop_path != null && !popularMovie!!.adult!!) {
-                    popularMovie!!.backdrop_path?.let { it1 ->
-                        binding.popularMoviePoster.downloadFromUrl(
-                            it1,
-                            placeHolderProgressBar(requireContext())
-                        )
-                    }
-                    binding.popularMoviePoster.visibility = View.VISIBLE
+    private fun setPopularMoviePoster(popularList : ArrayList<Movie>){
+        randomNumber = kotlin.random.Random.nextInt(0, popularList.size)
+        popularMovie = popularList[randomNumber]
+        popularMovie?.let {
+            if (popularMovie!!.backdrop_path != null && !popularMovie!!.adult!!) {
+                popularMovie!!.backdrop_path?.let { it1 ->
+                    binding.popularMoviePoster.downloadFromUrl(it1, placeHolderProgressBar(requireContext()))
                 }
+                binding.popularMoviePoster.visibility = View.VISIBLE
             }
         }
-        viewModel.trendMovies.observe(viewLifecycleOwner){trendMovies->
-            trendAdapter = MovieAdapter(this,trendMovies)
-            binding.trendMovieRecyclerView.layoutManager = LinearLayoutManager(
-                requireContext(),
-                LinearLayoutManager.HORIZONTAL, false
-            )
-            binding.trendMovieRecyclerView.setHasFixedSize(true)
-            binding.trendMovieRecyclerView.adapter = trendAdapter
+    }
+
+
+    private fun observeLiveData(){
+        viewModel.popularMoviesList.observe(viewLifecycleOwner){popularList->
+            popularList.data?.movies.let {
+                popularAdapter.movies = it!!.toList()
+                setPopularMoviePoster(it)
+            }
+            binding.popularMovieRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.popularMovieRecyclerView.setHasFixedSize(true)
+            binding.popularMovieRecyclerView.adapter = popularAdapter
+            popularAdapter.onItemClick = {movie->
+                navigateToMovieDetailFragment(movie)
+            }
         }
 
-        viewModel.upcomingMovies.observe(viewLifecycleOwner){upcomingMovies->
-            upcomingAdapter = MovieAdapter(this,upcomingMovies)
-            binding.upcomingMovieRecyclerView.layoutManager = LinearLayoutManager(
-                requireContext(),
-                LinearLayoutManager.HORIZONTAL, false
-            )
+        viewModel.trendMovieList.observe(viewLifecycleOwner){trendMovies->
+            trendMovies.data?.movies.let {
+                trendAdapter.movies = it!!.toList()
+            }
+            binding.trendMovieRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.trendMovieRecyclerView.setHasFixedSize(true)
+            binding.trendMovieRecyclerView.adapter = trendAdapter
+            trendAdapter.onItemClick = {movie->
+                navigateToMovieDetailFragment(movie)
+            }
+        }
+
+        viewModel.upcomingMovieList.observe(viewLifecycleOwner){upcomingMovies->
+            upcomingMovies.data?.movies.let {
+                upcomingAdapter.movies = it!!.toList()
+            }
+            binding.upcomingMovieRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             binding.upcomingMovieRecyclerView.setHasFixedSize(true)
             binding.upcomingMovieRecyclerView.adapter = upcomingAdapter
+            upcomingAdapter.onItemClick = {movie->
+                navigateToMovieDetailFragment(movie)
+            }
         }
     }
     private fun popularPosterClick(){
@@ -89,9 +94,8 @@ class MovieFragment : Fragment(),MovieAdapter.ClickListener {
         }
     }
 
-    override fun ClickedMovieItem(movie: Movie) {
-           val bundle = bundleOf("movie" to movie)
+    private fun navigateToMovieDetailFragment(movie: Movie){
+        val bundle = bundleOf("movie" to movie)
         findNavController().navigate(R.id.action_movieFragment_to_movieDetailFragment,bundle)
-
     }
 }

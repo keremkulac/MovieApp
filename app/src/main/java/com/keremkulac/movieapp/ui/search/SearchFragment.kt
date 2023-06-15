@@ -1,7 +1,6 @@
 package com.keremkulac.movieapp.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
@@ -15,21 +14,19 @@ import com.keremkulac.movieapp.adapter.SearchGenreAdapter
 import com.keremkulac.movieapp.adapter.SearchAdapter
 import com.keremkulac.movieapp.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter.ClickListener {
+class SearchFragment @Inject constructor(
+    private val searchAdapter: SearchAdapter,
+    private val genreAdapter : SearchGenreAdapter) : Fragment(R.layout.fragment_search){
 
     private lateinit var binding : FragmentSearchBinding
     private  val viewModel by viewModels<SearchViewModel>()
-    private lateinit var searchAdapter : SearchAdapter
-    private lateinit var genreAdapter : SearchGenreAdapter
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
-        binding = FragmentSearchBinding.inflate(inflater)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentSearchBinding.bind(view)
        setSearchMenu()
         viewModel.getData()
 
@@ -37,24 +34,30 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
 
 
    private fun createMovieRecyclerView(list : ArrayList<Movie>){
-       searchAdapter = SearchAdapter(this,list)
+       searchAdapter.movies = list
        binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
        binding.searchRecyclerView.adapter = searchAdapter
+       searchAdapter.onItemClick = {
+           movieClick(it)
+       }
    }
 
-    private fun createGenreRecyclerView(list : ArrayList<String>, genreWithSizeList : ArrayList<String>){
-        genreAdapter = SearchGenreAdapter(this,list,genreWithSizeList)
+    private fun createGenreRecyclerView(genreWithSizeList : ArrayList<String>){
+        genreAdapter.list = genreWithSizeList
         binding.movieGenresRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         binding.movieGenresRecyclerView.adapter = genreAdapter
+        genreAdapter.onItemClick = {
+            genreItemClick(it)
+        }
     }
 
     private fun setSearchMenu(){
         binding.searchView.setOnSearchClickListener {
             binding.movieGenresRecyclerView.visibility = View.VISIBLE
             viewModel.combineMovies()
-            val list = viewModel.getNames()
+            viewModel.getNames()
             viewModel.genreWithSize.observe(viewLifecycleOwner) {
-                createGenreRecyclerView(list, it)
+                createGenreRecyclerView(it)
             }
             createMovieRecyclerView(viewModel.allMovieListHm["All"]!!)
         }
@@ -86,7 +89,7 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
         })
     }
 
-    override fun ClickedItem(genre: String) {
+   private fun genreItemClick(genre : String){
         val list = viewModel.getGenre()[genre]!!
         createMovieRecyclerView(list)
         if(viewModel.getGenre()[genre]!!.size == 0){
@@ -96,7 +99,7 @@ class SearchFragment : Fragment(),SearchGenreAdapter.ClickListener,SearchAdapter
         }
     }
 
-    override fun ClickedMovieItem(movie: Movie) {
+    private fun movieClick(movie : Movie){
         val bundle = bundleOf("movie" to movie)
         findNavController().navigate(R.id.action_searchFragment_to_searchMovieDetailFragment,bundle)
     }

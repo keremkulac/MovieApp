@@ -9,14 +9,18 @@ import androidx.navigation.findNavController
 import com.keremkulac.movieapp.databinding.ActivityMainBinding
 import com.keremkulac.movieapp.repository.model.User
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     private val viewModel by viewModels<MainActivityViewModel>()
     private var user : User? = null
+    @Inject
+    lateinit var fragmentFactory: FragmentFactory
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportFragmentManager.fragmentFactory = fragmentFactory
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         bottomNavMenuSelect()
@@ -25,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         account()
         setUsernameLetter()
     }
+
 
     private fun bottomNavMenuSelect(){
         binding.bottomNav.setOnItemSelectedListener {menuItem->

@@ -1,6 +1,7 @@
 package com.keremkulac.movieapp.ui.login
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentLoginBinding
+import com.keremkulac.movieapp.util.FirebaseResource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,8 +28,15 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         switchRegisterFragment()
-        viewModel.loggedUser(findNavController())
+        isUserLogged()
+    }
 
+    private fun isUserLogged(){
+        viewModel.isUserLogged.observe(viewLifecycleOwner){
+            if(it){
+                findNavController().navigate(R.id.mainActivity)
+            }
+        }
     }
 
     private fun switchRegisterFragment(){
@@ -40,16 +49,26 @@ class LoginFragment : Fragment() {
 
     private fun signIn(){
         binding.loginSignIn.setOnClickListener {view->
-            val email : String = binding.loginEmail.text!!.trim().toString()
-            val password : String = binding.loginPassword.text!!.trim().toString()
-            if(email == "" || password == ""){
-                Toast.makeText(requireContext(),"Please enter all information completely", Toast.LENGTH_SHORT).show()
-
-            }else{
-               viewModel.signIn(email,password,findNavController(),requireContext())
-            }
+            viewModel.signInUser(
+                binding.loginEmail.text.toString(),
+                binding.loginPassword.text.toString()
+            )
         }
-
+        observeLoginStatus()
     }
 
+    private fun observeLoginStatus(){
+        viewModel.userSignInStatus.observe(viewLifecycleOwner){
+            when (it) {
+                is FirebaseResource.Loading -> {
+                    Log.d("TAG1","LOADING") }
+                is FirebaseResource.Success -> {
+                    findNavController().navigate(R.id.mainActivity)
+                }
+                is FirebaseResource.Error -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 }

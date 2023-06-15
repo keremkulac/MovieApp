@@ -36,4 +36,18 @@ fun replaceFragment(fragment: Fragment, fragmentManager: FragmentManager,layoutI
     fragmentTransaction.commit()
 }
 
+sealed class FirebaseResource<T>(val data: T? = null, val message: String? = null) {
+    class Success<T>(data: T) : FirebaseResource<T>(data)
+    class Loading<T>(data: T? = null) : FirebaseResource<T>(data)
+    class Error<T>(message: String, data: T? = null) : FirebaseResource<T>(data, message)
+}
+
+inline fun <T> safeCall(action: () -> FirebaseResource<T>): FirebaseResource<T> {
+    return try {
+        action()
+    } catch (e: Exception) {
+        FirebaseResource.Error(e.message ?: "An unknown Error Occurred")
+    }
+}
+
 

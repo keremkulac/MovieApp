@@ -2,6 +2,7 @@ package com.keremkulac.movieapp.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.keremkulac.movieapp.repository.FirebaseRepositoryImp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,13 @@ object FirebaseModule {
     fun provideFirebaseAuthInstance() : FirebaseAuth{
         return FirebaseAuth.getInstance()
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRepositoryImp() : FirebaseRepositoryImp{
+        return FirebaseRepositoryImp(provideFireStoreInstance(), provideFirebaseAuthInstance())
+    }
+
+
 
 }

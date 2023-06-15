@@ -1,29 +1,43 @@
 package com.keremkulac.movieapp.ui.login
 
-import android.content.Context
-import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
-import com.keremkulac.movieapp.R
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseUser
+import com.keremkulac.movieapp.repository.FirebaseRepositoryImp
+import com.keremkulac.movieapp.util.FirebaseResource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val auth : FirebaseAuth) : ViewModel() {
+class LoginViewModel @Inject constructor( private val firebaseRepositoryImp: FirebaseRepositoryImp) : ViewModel() {
 
-    fun signIn(email : String, password : String,navController: NavController,context: Context){
-        auth.signInWithEmailAndPassword(email,password)
-            .addOnSuccessListener {
-                navController.navigate(R.id.mainActivity)
-            }.addOnFailureListener{
-                Toast.makeText(context, it.localizedMessage!!.toString(), Toast.LENGTH_SHORT).show()
-            }
-    }
+    private val _userSignInStatus = MutableLiveData<FirebaseResource<AuthResult>>()
+    val userSignInStatus : MutableLiveData<FirebaseResource<AuthResult>> = _userSignInStatus
+    private val _isUserLogged = MutableLiveData<Boolean>()
+    val isUserLogged : MutableLiveData<Boolean> = _isUserLogged
+    private var currentUser : FirebaseUser? = null
 
-     fun loggedUser(navController: NavController){
-        if(auth.currentUser != null){
-            navController.navigate(R.id.mainActivity)
+    init {
+        viewModelScope.launch{
+            currentUser = firebaseRepositoryImp.getCurrentUser()
+            _isUserLogged.value = currentUser != null
         }
     }
+    fun signInUser(userEmailAddress: String, userLoginPassword: String) {
+        if (userEmailAddress.isEmpty() || userLoginPassword.isEmpty()) {
+            _userSignInStatus.postValue(FirebaseResource.Error(
+                "Please enter all information completely"))
+        } else {
+            _userSignInStatus.postValue(FirebaseResource.Loading())
+            viewModelScope.launch(Dispatchers.Main) {
+                val loginResult = firebaseRepositoryImp.userLogin(userEmailAddress,userLoginPassword)
+                _userSignInStatus.postValue(loginResult)
+            }
+        }
+    }
+
 }

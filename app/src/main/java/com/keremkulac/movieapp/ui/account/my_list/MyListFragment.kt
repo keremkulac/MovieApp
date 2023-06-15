@@ -1,52 +1,64 @@
 package com.keremkulac.movieapp.ui.account.my_list
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.keremkulac.movieapp.Movie
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.adapter.MyListAdapter
 import com.keremkulac.movieapp.databinding.FragmentMyListBinding
 import com.keremkulac.movieapp.repository.model.User
+import com.keremkulac.movieapp.util.FirebaseResource
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyListFragment : Fragment(),MyListAdapter.ClickListener {
+class MyListFragment @Inject constructor(private val myListAdapter: MyListAdapter) : Fragment(R.layout.fragment_my_list) {
 
     private lateinit var binding : FragmentMyListBinding
     private val viewModel by viewModels<MyListViewModel>()
-    private lateinit var adapter : MyListAdapter
-
     private var user : User? = null
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMyListBinding.inflate(inflater)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeLiveData()
+        binding = FragmentMyListBinding.bind(view)
+        observeMyList()
         backToAccount()
         user = arguments?.getSerializable("user") as User?
+        setupRecyclerAdapter()
     }
 
-    private fun setRecyclerView(list : ArrayList<Movie>){
+    private fun setupRecyclerAdapter(){
         val layoutManager = GridLayoutManager(requireContext(), 2)
         binding.myListRecyclerView.layoutManager = layoutManager
-        adapter = MyListAdapter(this,list)
-       binding.myListRecyclerView.adapter = adapter
+        binding.myListRecyclerView.adapter = myListAdapter
+        myListAdapter.onItemClick = {
+            val bundle = bundleOf("movie" to it,"myList" to "myList","user" to user)
+            findNavController().navigate(R.id.action_myListFragment_to_movieDetailFragment,bundle)
+        }
     }
-    private fun observeLiveData(){
-            viewModel.myList.observe(viewLifecycleOwner){
-                setRecyclerView(it)
+
+
+    private fun observeMyList() {
+        viewModel.myList.observe(viewLifecycleOwner) {
+            when (it) {
+                is FirebaseResource.Loading -> {
+                    Log.d("TAG1", "LOADING")
+                }
+                is FirebaseResource.Success -> {
+                    myListAdapter.movies = it.data!!
+                }
+                is FirebaseResource.Error -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
+    }
 
     private fun backToAccount(){
         binding.myListToAccount.setOnClickListener {
@@ -55,8 +67,4 @@ class MyListFragment : Fragment(),MyListAdapter.ClickListener {
         }
     }
 
-    override fun ClickedMyListItem(movie: Movie) {
-        val bundle = bundleOf("movie" to movie,"myList" to "myList","user" to user)
-        findNavController().navigate(R.id.action_myListFragment_to_movieDetailFragment,bundle)
-    }
 }

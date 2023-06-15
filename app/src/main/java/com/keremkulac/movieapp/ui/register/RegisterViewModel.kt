@@ -1,43 +1,44 @@
 package com.keremkulac.movieapp.ui.register
 
 import android.content.Context
+import android.util.Patterns
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.keremkulac.movieapp.R
-import com.keremkulac.movieapp.repository.model.User
+import com.google.firebase.auth.AuthResult
+import com.keremkulac.movieapp.repository.FirebaseRepositoryImp
+import com.keremkulac.movieapp.util.FirebaseResource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor(private val firestore: FirebaseFirestore
-,private val auth : FirebaseAuth): ViewModel() {
+class RegisterViewModel @Inject constructor(private val firebaseRepositoryImp: FirebaseRepositoryImp): ViewModel() {
+    private val _userRegistrationStatus = MutableLiveData<FirebaseResource<AuthResult>>()
+    val userRegistrationStatus: MutableLiveData<FirebaseResource<AuthResult>> = _userRegistrationStatus
 
+    fun createUser(userFirstname : String,userLastname : String,userEmail: String,password : String) {
+        val hm = HashMap<String, Any>()
+        var error =
+            if (userFirstname.isEmpty() || userLastname.isEmpty() || userEmail.isEmpty() || password.isEmpty()) {
+                "Please enter all information completely"
+            } else null
 
-   private fun saveUserFromFirebase(user : User?, navController: NavController){
-       val hm = HashMap<String,Any>()
-        user?.let {
-           hm["userEmail"] = user.email.toString()
-            hm["userFirstname"] = user.firstname.toString()
-            hm["userLastname"] = user.lastname.toString()
-
-            firestore.collection("Users").document(user.email.toString())
-               .set(hm)
-               .addOnSuccessListener {
-                   navController.navigate(R.id.loginFragment)
-               }
-       }
-    }
-    fun saveUser(user : User?,password: String, context: Context,navController: NavController){
-        user?.let {
-            auth.createUserWithEmailAndPassword(user.email.toString(),password).addOnSuccessListener {
-                Toast.makeText(context,"Registration Successful",Toast.LENGTH_SHORT).show()
-                saveUserFromFirebase(user,navController)
-            }.addOnFailureListener {
-                Toast.makeText(context, it.localizedMessage!!.toString(),Toast.LENGTH_SHORT).show()
-            }
+        error?.let {
+            _userRegistrationStatus.postValue(FirebaseResource.Error(it))
+            return
+        }
+        hm["userEmail"] = userEmail
+        hm["userFirstname"] = userFirstname
+        hm["userLastname"] = userLastname
+        _userRegistrationStatus.postValue(FirebaseResource.Loading())
+        viewModelScope.launch(Dispatchers.Main) {
+            val result = firebaseRepositoryImp.userRegister(hm,userEmail,password)
+            _userRegistrationStatus.postValue(result)
         }
     }
+
 }

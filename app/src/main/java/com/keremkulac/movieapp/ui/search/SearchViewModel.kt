@@ -60,12 +60,13 @@ class SearchViewModel
     private var actionAndAdventureList = ArrayList<Movie>()
     private var combinedGenreList = ArrayList<Genre>()
     var allMovieListHm = HashMap<String,ArrayList<Movie>>()
-    var genreWithSize = MutableLiveData<ArrayList<String>>()
+
+    private val _genreWithSize = MutableLiveData<ArrayList<String>>()
+    val genreWithSize : LiveData<ArrayList<String>>
+        get() = _genreWithSize
+
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         throwable.localizedMessage?.let { Log.d("TAG", it) }
-    }
-    init {
-
     }
 
     fun getData(){
@@ -81,10 +82,8 @@ class SearchViewModel
      private fun getPopularMovies(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getPopularMovies()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    popularMovies.postValue(it.movies)
-                }
+            result.data?.let {
+                popularMovies.postValue(it.movies)
             }
         }
     }
@@ -92,20 +91,16 @@ class SearchViewModel
     private fun getTrendMovies(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTrendMovies()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    trendMovies.postValue(it.movies)
-                }
+            result.data?.let {
+                trendMovies.postValue(it.movies)
             }
         }
     }
     private fun getUpcomingMovies(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getUpcomingMovies()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    upcomingMovies.postValue(it.movies)
-                }
+            result.data?.let {
+                upcomingMovies.postValue(it.movies)
             }
         }
     }
@@ -113,10 +108,8 @@ class SearchViewModel
      private fun getMovieGenres(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getMovieGenre()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    movieGenres.postValue(it.genres)
-                }
+            result.data?.let {
+                movieGenres.postValue(it.genres)
             }
         }
     }
@@ -124,10 +117,8 @@ class SearchViewModel
     private fun getTvSeriesGenres(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTvSeriesGenre()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    tvSeriesGenres.postValue(it.genres)
-                }
+            result.data?.let {
+                tvSeriesGenres.postValue(it.genres)
             }
         }
     }
@@ -135,10 +126,8 @@ class SearchViewModel
     private fun getPopularTvSeries(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTvPopular()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    popularTvSeries.postValue(it.movies)
-                }
+            result.data?.let {
+                popularTvSeries.postValue(it.movies)
             }
         }
     }
@@ -146,10 +135,8 @@ class SearchViewModel
     private fun getTopRatedTvSeries(){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val result = movieRepositoryImp.getTopRated()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    topRatedTvSeries.postValue(it.movies)
-                }
+            result.data?.let {
+                topRatedTvSeries.postValue(it.movies)
             }
         }
     }
@@ -271,15 +258,15 @@ class SearchViewModel
         }
     }
 
-    fun getNames() : ArrayList<String>{
-        val genreNames = ArrayList<String>()
+    fun getNames(){
         val sizeList = ArrayList<String>()
         var size : String
         for(genre in combinedGenreList){
-            genre.name?.let { genreNames.add(it) }
+            genre.name?.let {
             if(allMovieListHm[genre.name] != null){
                 size = allMovieListHm[genre.name]!!.size.toString()
                 sizeList.add(genre.name+"(${size})")
+                 }
             }
         }
         sizeList.sortBy {
@@ -289,17 +276,15 @@ class SearchViewModel
         size = allMovieListHm["All"]!!.size.toString()
         list.add("All"+"(${size})")
         val list1 = list+sizeList
-        genreWithSize.value = list1 as ArrayList<String>
-        return genreNames
+        _genreWithSize.value = list1 as ArrayList<String>
     }
-
 
     fun getGenre() : HashMap<String,ArrayList<Movie>>{
         return allMovieListHm
     }
     fun clearList(){
-        for (genre in getNames()) {
-           allMovieListHm[genre]!!.clear()
+        for (genre in combinedGenreList) {
+           allMovieListHm[genre.name]!!.clear()
         }
         allMovieListHm["All"]!!.clear()
     }

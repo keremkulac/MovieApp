@@ -23,14 +23,9 @@ class SearchMovieDetailViewModel
     private fun getGenres(){
         CoroutineScope(Dispatchers.IO).launch {
             val result = movieRepositoryImp.getMovieGenre()
-            if(result.isSuccessful){
-                result.body()?.let {
-                    genres.postValue(it.genres)
-                }
-            }else{
-                Log.d("TAG","ERROR TREND MOVIE")
+            result.data?.let {
+                genres.postValue(it.genres)
             }
-
         }
     }
 

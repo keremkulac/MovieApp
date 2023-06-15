@@ -2,9 +2,7 @@ package com.keremkulac.movieapp.ui.tv_series
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -16,61 +14,62 @@ import com.keremkulac.movieapp.databinding.FragmentTvSeriesBinding
 import com.keremkulac.movieapp.util.downloadFromUrl
 import com.keremkulac.movieapp.util.placeHolderProgressBar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class TvSeriesFragment : Fragment(), TvSeriesAdapter.ClickListener {
+class TvSeriesFragment @Inject constructor(
+    private val popularAdapter: TvSeriesAdapter,
+    private val topRatedAdapter: TvSeriesAdapter) : Fragment(R.layout.fragment_tv_series) {
+
     private val viewModel  by viewModels<TvSeriesViewModel>()
-    private lateinit var binding : FragmentTvSeriesBinding
-    private lateinit var popularAdapter : TvSeriesAdapter
-    private lateinit var topRatedAdapter : TvSeriesAdapter
+    private  lateinit var binding : FragmentTvSeriesBinding
     private  var popularTvSeries : Movie? = null
     private var randomNumber : Int = 0
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentTvSeriesBinding.inflate(inflater)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentTvSeriesBinding.bind(view)
         observeLiveData()
         popularPosterClick()
     }
 
-    private fun observeLiveData(){
-        viewModel.popularTvSeries.observe(viewLifecycleOwner) { popularList ->
-            popularAdapter = TvSeriesAdapter(this,popularList)
-            binding.popularTvSeriesRecyclerView.layoutManager = LinearLayoutManager(
-                requireContext(),
-                LinearLayoutManager.HORIZONTAL, false
-            )
-            binding.popularTvSeriesRecyclerView.setHasFixedSize(true)
-            binding.popularTvSeriesRecyclerView.adapter = popularAdapter
-            randomNumber = kotlin.random.Random.nextInt(0, popularList.size)
-            popularTvSeries = popularList[randomNumber]
-            popularTvSeries?.let {
-                it.backdrop_path.let {
-                    popularTvSeries!!.backdrop_path?.let { it1 ->
-                        binding.popularTvSeriesPoster.downloadFromUrl(
-                            it1,
-                            placeHolderProgressBar(requireContext())
-                        )
-                    }
+    private fun setupPopularTvSeriesPoster(popularList : ArrayList<Movie>){
+        randomNumber = kotlin.random.Random.nextInt(0, popularList.size)
+        popularTvSeries = popularList[randomNumber]
+        popularTvSeries?.let {
+            it.backdrop_path.let {
+                popularTvSeries!!.backdrop_path?.let { it1 ->
+                    binding.popularTvSeriesPoster.downloadFromUrl(it1, placeHolderProgressBar(requireContext()))
                 }
             }
-
+        }
+    }
+    private fun observeLiveData(){
+        viewModel.popularTvSeriesList.observe(viewLifecycleOwner) { popularList ->
+            popularList.data?.movies.let {
+                popularAdapter.tvSeriesList = it!!.toList()
+                setupPopularTvSeriesPoster(it)
+            }
+            binding.popularTvSeriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            binding.popularTvSeriesRecyclerView.setHasFixedSize(true)
+            binding.popularTvSeriesRecyclerView.adapter = popularAdapter
+            popularAdapter.onItemClick={
+                navigateToMovieDetailFragment(it)
+            }
         }
 
-        viewModel.topRatedTvSeries.observe(viewLifecycleOwner){topRated->
-            topRatedAdapter = TvSeriesAdapter(this,topRated)
-            binding.topRatedTvSeriesRecyclerView.layoutManager = LinearLayoutManager(
-                requireContext(),
-                LinearLayoutManager.HORIZONTAL, false
-            )
+        viewModel.topRatedTvSeriesList.observe(viewLifecycleOwner){topRated->
+            topRated.data?.movies.let {
+                topRatedAdapter.tvSeriesList = it!!.toList()
+            }
+            binding.topRatedTvSeriesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             binding.topRatedTvSeriesRecyclerView.setHasFixedSize(true)
             binding.topRatedTvSeriesRecyclerView.adapter = topRatedAdapter
+            topRatedAdapter.onItemClick={
+                navigateToMovieDetailFragment(it)
+            }
         }
     }
 
@@ -79,10 +78,10 @@ class TvSeriesFragment : Fragment(), TvSeriesAdapter.ClickListener {
                 val bundle = bundleOf("movie" to popularTvSeries)
                 findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
                 }
-            }
-
-    override fun ClickedTvSeriesItem(movie: Movie) {
+    }
+    private fun navigateToMovieDetailFragment(movie: Movie){
         val bundle = bundleOf("movie" to movie)
         findNavController().navigate(R.id.action_tvSeriesFragment_to_movieDetailFragment2,bundle)
     }
+
 }

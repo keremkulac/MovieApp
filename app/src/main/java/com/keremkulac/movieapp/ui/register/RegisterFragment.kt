@@ -1,6 +1,8 @@
 package com.keremkulac.movieapp.ui.register
 
 import android.os.Bundle
+import android.text.InputType
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.keremkulac.movieapp.R
 import com.keremkulac.movieapp.databinding.FragmentRegisterBinding
 import com.keremkulac.movieapp.repository.model.User
+import com.keremkulac.movieapp.util.FirebaseResource
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,18 +35,30 @@ class RegisterFragment : Fragment() {
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
     }
-    private fun saveUser(){
-        binding.registerSignUp.setOnClickListener {
-            val email: String = binding.registerEmail.text?.trim().toString()
-            val password : String = binding.registerPassword.text?.trim().toString()
-            val name : String = binding.registerName.text?.trim().toString().capitalize()
-            val lastname : String = binding.registerLastName.text?.trim().toString().capitalize()
 
-            if( email == "" || password == "" || name == "" || lastname == ""){
-                Toast.makeText(requireContext(),"Please enter all information completely",Toast.LENGTH_SHORT).show()
-            }else{
-                val user = User(email,name,lastname)
-                viewModel.saveUser(user,password,requireContext(),findNavController())
+    private fun saveUser(){
+        binding.registerEmail.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+        binding.registerSignUp.setOnClickListener {
+            viewModel.createUser(
+                binding.registerName.text?.trim().toString().capitalize(),
+                binding.registerLastName.text?.trim().toString().capitalize(),
+                binding.registerEmail.text?.toString()!!.trim(),
+                binding.registerPassword.text?.trim().toString()
+            )
+        }
+        observeRegistrationStatus()
+    }
+
+    private fun observeRegistrationStatus(){
+        viewModel.userRegistrationStatus.observe(viewLifecycleOwner){
+            when (it) {
+                is FirebaseResource.Loading -> {
+                    Log.d("TAG1","LOADING") }
+                is FirebaseResource.Success -> {
+                    findNavController().navigate(R.id.loginFragment)}
+                is FirebaseResource.Error -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
